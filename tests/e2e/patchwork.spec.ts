@@ -144,6 +144,25 @@ test("edits a file manually through the visible code editor", async ({
   });
 });
 
+test("keeps the preview iframe least-privileged", async ({
+  page,
+}, testInfo) => {
+  await page.goto("/?demo=landing");
+  await waitForTools(page);
+  if (testInfo.project.name === "tablet") {
+    await page.getByRole("button", { name: "Preview", exact: true }).click();
+  }
+  const iframe = page.locator(".preview-frame iframe");
+  await expect(iframe).toHaveAttribute(
+    "sandbox",
+    "allow-scripts allow-same-origin",
+  );
+  await expect(iframe).not.toHaveAttribute("allow", /.+/);
+  await expect(page.getByText("Preview ready")).toBeVisible({
+    timeout: 20_000,
+  });
+});
+
 test("shows an error introduced through Site Tools and clears it after repair", async ({
   page,
 }, testInfo) => {

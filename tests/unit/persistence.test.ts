@@ -4,7 +4,10 @@ import {
   createWorkspaceState,
   snapshotWorkspace,
 } from "../../src/domain/workspace/mutations";
-import { deletePatchworkDatabase } from "../../src/services/persistence/db";
+import {
+  deletePatchworkDatabase,
+  openPatchworkDatabase,
+} from "../../src/services/persistence/db";
 import {
   createWorkspaceFacade,
   type WorkspaceFacade,
@@ -111,6 +114,40 @@ describe("persistent workspace facade", () => {
     ).toBe(true);
   });
 
+  it("rejects a checkpoint whose persisted starter was tampered", async () => {
+    const name = `patchwork-test-${crypto.randomUUID()}`;
+    const facade = makeFacade(name);
+    await facade.ready();
+    const database = await openPatchworkDatabase(name);
+    await database.put("checkpoints", {
+      id: "tampered-checkpoint",
+      projectId: "persistent-project",
+      label: "Tampered",
+      kind: "manual",
+      origin: "ui",
+      sourceRevision: 0,
+      createdAt: "2026-08-30T03:00:00.000Z",
+      snapshot: {
+        starterId: "travel",
+        activePath: "src/App.tsx",
+        files: [{ path: "src/App.tsx", content: "tampered" }],
+      },
+    } as never);
+    database.close();
+
+    const before = facade.getState();
+    const result = await facade.restoreCheckpoint({
+      checkpointId: "tampered-checkpoint",
+      expectedRevision: 0,
+      origin: "ui",
+    });
+    expect(result).toMatchObject({
+      ok: false,
+      error: { code: "PERSISTENCE_FAILED" },
+    });
+    expect(facade.getState()).toEqual(before);
+  });
+
   it("reloads persisted state and keeps reads side-effect free", async () => {
     const name = `patchwork-test-${crypto.randomUUID()}`;
     const first = makeFacade(name);
@@ -130,6 +167,37 @@ describe("persistent workspace facade", () => {
     expect(second.readFiles(["src/App.tsx"]).ok).toBe(true);
     expect(await second.listCheckpoints()).toEqual(checkpointsBefore);
     expect(await second.getActivities()).toEqual(activitiesBefore);
+  });
+
+  it("revalidates persisted records before making them live", async () => {
+    const name = `patchwork-test-${crypto.randomUUID()}`;
+    const database = await openPatchworkDatabase(name);
+    await database.put("workspaces", {
+      schemaVersion: 1,
+      projectId: "persistent-project",
+      starterId: "landing",
+      revision: 9,
+      activePath: "../escape.tsx",
+      files: {
+        "../escape.tsx": {
+          path: "../escape.tsx",
+          content: "malicious",
+          sizeBytes: 1,
+          updatedAt: "2026-08-30T03:00:00.000Z",
+        },
+      },
+      createdAt: "2026-08-30T03:00:00.000Z",
+      updatedAt: "2026-08-30T03:00:00.000Z",
+    } as never);
+    database.close();
+
+    const facade = makeFacade(name);
+    await facade.ready();
+    const state = facade.getState();
+    expect(state.revision).toBe(0);
+    expect(state.files["src/App.tsx"].content).toBe("initial");
+    expect(state.files["../escape.tsx"]).toBeUndefined();
+    expect(facade.prepareProjectExport().ok).toBe(true);
   });
 
   it("resets the demo to its immutable starter snapshot", async () => {

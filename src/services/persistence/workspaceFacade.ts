@@ -6,7 +6,10 @@ import {
   type Result,
 } from "../../domain/workspace/errors";
 import { WORKSPACE_LIMITS } from "../../domain/workspace/limits";
-import { planWorkspaceMutation } from "../../domain/workspace/mutations";
+import {
+  createWorkspaceState,
+  planWorkspaceMutation,
+} from "../../domain/workspace/mutations";
 import { parseProjectPath } from "../../domain/workspace/paths";
 import {
   listWorkspaceFiles,
@@ -93,6 +96,64 @@ const defaultId = (): string =>
     ? crypto.randomUUID()
     : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
 
+const decodePersistedWorkspace = (
+  candidate: unknown,
+  expected: WorkspaceState,
+): Result<WorkspaceState> => {
+  if (!candidate || typeof candidate !== "object" || Array.isArray(candidate))
+    return failure(persistenceFailure());
+
+  const record = candidate as Record<string, unknown>;
+  if (
+    record.schemaVersion !== 1 ||
+    record.projectId !== expected.projectId ||
+    record.starterId !== expected.starterId ||
+    !Number.isSafeInteger(record.revision) ||
+    Number(record.revision) < 0 ||
+    (record.activePath !== null && typeof record.activePath !== "string") ||
+    typeof record.createdAt !== "string" ||
+    Number.isNaN(Date.parse(record.createdAt)) ||
+    typeof record.updatedAt !== "string" ||
+    Number.isNaN(Date.parse(record.updatedAt)) ||
+    !record.files ||
+    typeof record.files !== "object" ||
+    Array.isArray(record.files)
+  ) {
+    return failure(persistenceFailure());
+  }
+
+  const rawFiles = record.files as Record<string, unknown>;
+  const files: Record<string, string> = {};
+  for (const [key, value] of Object.entries(rawFiles)) {
+    if (
+      !value ||
+      typeof value !== "object" ||
+      Array.isArray(value) ||
+      (value as Record<string, unknown>).path !== key ||
+      typeof (value as Record<string, unknown>).content !== "string"
+    ) {
+      return failure(persistenceFailure());
+    }
+    files[key] = (value as Record<string, unknown>).content as string;
+  }
+
+  const decoded = createWorkspaceState({
+    projectId: expected.projectId,
+    starterId: expected.starterId,
+    files,
+    activePath: record.activePath as string | null,
+    now: record.updatedAt,
+  });
+  if (!decoded.ok) return failure(persistenceFailure());
+
+  return success({
+    ...decoded.value,
+    revision: Number(record.revision) as WorkspaceState["revision"],
+    createdAt: record.createdAt,
+    updatedAt: record.updatedAt,
+  });
+};
+
 export const createWorkspaceFacade = (
   options: WorkspaceFacadeOptions,
 ): WorkspaceFacade => {
@@ -114,8 +175,11 @@ export const createWorkspaceFacade = (
     if (!database || closed) return;
     const persisted = await database.get("workspaces", state.projectId);
     if (persisted) {
-      state = persisted;
-      notify();
+      const decoded = decodePersistedWorkspace(persisted, state);
+      if (decoded.ok) {
+        state = decoded.value;
+        notify();
+      }
     }
   };
 
@@ -123,8 +187,11 @@ export const createWorkspaceFacade = (
     database = await openPatchworkDatabase(databaseName);
     const transaction = database.transaction("workspaces", "readwrite");
     const stored = await transaction.store.get(state.projectId);
-    if (stored) state = stored;
-    else await transaction.store.put(state);
+    if (stored) {
+      const decoded = decodePersistedWorkspace(stored, state);
+      if (decoded.ok) state = decoded.value;
+      else await transaction.store.put(state);
+    } else await transaction.store.put(state);
     await transaction.done;
 
     if (typeof BroadcastChannel !== "undefined") {
@@ -168,8 +235,8 @@ export const createWorkspaceFacade = (
         "readwrite",
       );
       const workspaceStore = transaction.objectStore("workspaces");
-      const persisted = await workspaceStore.get(state.projectId);
-      if (!persisted) {
+      const stored = await workspaceStore.get(state.projectId);
+      if (!stored) {
         await transaction.done;
         return failure({
           code: "NOT_READY",
@@ -177,6 +244,12 @@ export const createWorkspaceFacade = (
           retryable: true,
         });
       }
+      const decoded = decodePersistedWorkspace(stored, state);
+      if (!decoded.ok) {
+        await transaction.done;
+        return decoded;
+      }
+      const persisted = decoded.value;
 
       const timestamp = now();
       const planned = planWorkspaceMutation(persisted, command, {
@@ -243,8 +316,14 @@ export const createWorkspaceFacade = (
       try {
         const db = await ensureDatabase();
         const transaction = db.transaction("workspaces", "readwrite");
-        const persisted = await transaction.store.get(state.projectId);
-        if (!persisted?.files[parsed.value]) {
+        const stored = await transaction.store.get(state.projectId);
+        const decoded = decodePersistedWorkspace(stored, state);
+        if (!decoded.ok) {
+          await transaction.done;
+          return decoded;
+        }
+        const persisted = decoded.value;
+        if (!persisted.files[parsed.value]) {
           await transaction.done;
           return failure({
             code: "FILE_NOT_FOUND",
@@ -270,10 +349,10 @@ export const createWorkspaceFacade = (
           ["workspaces", "checkpoints", "activities"],
           "readwrite",
         );
-        const persisted = await transaction
+        const stored = await transaction
           .objectStore("workspaces")
           .get(state.projectId);
-        if (!persisted) {
+        if (!stored) {
           await transaction.done;
           return failure({
             code: "NOT_READY",
@@ -281,6 +360,12 @@ export const createWorkspaceFacade = (
             retryable: true,
           });
         }
+        const decoded = decodePersistedWorkspace(stored, state);
+        if (!decoded.ok) {
+          await transaction.done;
+          return decoded;
+        }
+        const persisted = decoded.value;
         const existing = await transaction
           .objectStore("checkpoints")
           .index("by-project")
@@ -408,10 +493,18 @@ export const createWorkspaceFacade = (
         return failure(persistenceFailure());
       }
     },
-    prepareProjectExport: () => prepareProjectExport(state),
+    prepareProjectExport: () => {
+      const decoded = decodePersistedWorkspace(state, options.initialWorkspace);
+      return decoded.ok ? prepareProjectExport(decoded.value) : decoded;
+    },
     async buildProjectZip() {
       try {
-        return success(await buildProjectZip(state));
+        const decoded = decodePersistedWorkspace(
+          state,
+          options.initialWorkspace,
+        );
+        if (!decoded.ok) return decoded;
+        return success(await buildProjectZip(decoded.value));
       } catch {
         return failure({
           code: "PERSISTENCE_FAILED",

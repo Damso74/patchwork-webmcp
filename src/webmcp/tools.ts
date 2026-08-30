@@ -75,13 +75,15 @@ const stringValue = (
 ): string | undefined =>
   typeof input[key] === "string" ? input[key] : undefined;
 
-const numberValue = (
+const optionalRevision = (
   input: Record<string, unknown>,
-  key: string,
-): number | undefined =>
-  Number.isInteger(input[key]) && Number(input[key]) >= 0
-    ? Number(input[key])
-    : undefined;
+): { ok: true; value?: number } | { ok: false } => {
+  if (!("expectedRevision" in input)) return { ok: true };
+  const value = input.expectedRevision;
+  return Number.isSafeInteger(value) && Number(value) >= 0
+    ? { ok: true, value: Number(value) }
+    : { ok: false };
+};
 
 export const createPatchworkTools = (
   context: ToolFactoryContext,
@@ -187,6 +189,13 @@ export const createPatchworkTools = (
       `Create or replace up to ${WORKSPACE_LIMITS.maxWriteBatchFiles} text files as one atomic change. Use for complete file contents after reading the current revision. Patchwork validates the entire batch, creates exactly one automatic checkpoint, persists once, and increments the revision once; an invalid item changes nothing.`,
       false,
       async (input) => {
+        const revision = optionalRevision(input);
+        if (!revision.ok)
+          return invalidInput(
+            "write_files",
+            Number(facade.getState().revision),
+            "expectedRevision must be a non-negative safe integer when provided.",
+          );
         if (!Array.isArray(input.writes)) {
           return invalidInput(
             "write_files",
@@ -212,7 +221,7 @@ export const createPatchworkTools = (
           "write_files",
           await facade.writeFiles({
             writes,
-            expectedRevision: numberValue(input, "expectedRevision"),
+            expectedRevision: revision.value,
             origin: "webmcp",
           }),
         );
@@ -225,6 +234,13 @@ export const createPatchworkTools = (
       "Rename or move one explicit text file after validating both canonical paths and destination collisions. Creates a checkpoint and changes the workspace atomically.",
       false,
       async (input) => {
+        const revision = optionalRevision(input);
+        if (!revision.ok)
+          return invalidInput(
+            "move_file",
+            Number(facade.getState().revision),
+            "expectedRevision must be a non-negative safe integer when provided.",
+          );
         const from = stringValue(input, "from");
         const to = stringValue(input, "to");
         if (!from || !to)
@@ -238,7 +254,7 @@ export const createPatchworkTools = (
           await facade.moveFile({
             from,
             to,
-            expectedRevision: numberValue(input, "expectedRevision"),
+            expectedRevision: revision.value,
             origin: "webmcp",
           }),
         );
@@ -250,6 +266,13 @@ export const createPatchworkTools = (
       "Delete exactly one explicit file. Globs, directories, and recursive deletion are never accepted. Creates a checkpoint before the atomic deletion.",
       false,
       async (input) => {
+        const revision = optionalRevision(input);
+        if (!revision.ok)
+          return invalidInput(
+            "delete_file",
+            Number(facade.getState().revision),
+            "expectedRevision must be a non-negative safe integer when provided.",
+          );
         const path = stringValue(input, "path");
         if (!path)
           return invalidInput(
@@ -261,7 +284,7 @@ export const createPatchworkTools = (
           "delete_file",
           await facade.deleteFile({
             path,
-            expectedRevision: numberValue(input, "expectedRevision"),
+            expectedRevision: revision.value,
             origin: "webmcp",
           }),
         );
@@ -280,14 +303,21 @@ export const createPatchworkTools = (
       "Create a project checkpoint",
       "Create a named or automatically named local snapshot of the current workspace without changing file content or revision. Use before a risky transformation or milestone.",
       false,
-      async (input) =>
-        envelope.fromResult(
-          "create_checkpoint",
-          await facade.createCheckpoint({
-            label: stringValue(input, "label"),
-            origin: "webmcp",
-          }),
-        ),
+      async (input) => {
+        const result = await facade.createCheckpoint({
+          label: stringValue(input, "label"),
+          origin: "webmcp",
+        });
+        if (!result.ok) return envelope.fromResult("create_checkpoint", result);
+        const { id, label, kind, sourceRevision, createdAt } = result.value;
+        return envelope.ok("create_checkpoint", {
+          id,
+          label,
+          kind,
+          sourceRevision,
+          createdAt,
+        });
+      },
     ),
     tool(
       "restore_checkpoint",
@@ -295,6 +325,13 @@ export const createPatchworkTools = (
       "Restore one explicit checkpoint by identifier. Patchwork first preserves the current state as a safety checkpoint, then restores and increments the revision once.",
       false,
       async (input) => {
+        const revision = optionalRevision(input);
+        if (!revision.ok)
+          return invalidInput(
+            "restore_checkpoint",
+            Number(facade.getState().revision),
+            "expectedRevision must be a non-negative safe integer when provided.",
+          );
         const checkpointId = stringValue(input, "checkpointId");
         if (!checkpointId)
           return invalidInput(
@@ -306,7 +343,7 @@ export const createPatchworkTools = (
           "restore_checkpoint",
           await facade.restoreCheckpoint({
             checkpointId,
-            expectedRevision: numberValue(input, "expectedRevision"),
+            expectedRevision: revision.value,
             origin: "webmcp",
           }),
         );

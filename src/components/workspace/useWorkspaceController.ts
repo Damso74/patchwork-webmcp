@@ -69,10 +69,19 @@ export function useWorkspaceController() {
   const [workspace, setWorkspace] = useState(() => workspaceFacade.getState());
   const [activities, setActivities] = useState<ActivityItem[]>([]);
   const [checkpoints, setCheckpoints] = useState<CheckpointItem[]>([]);
-  const [saveState, setSaveState] = useState<"saved" | "saving" | "memory">(
-    "saving",
+  const [saveState, setSaveState] = useState<
+    "saved" | "saving" | "memory" | "conflict"
+  >("saving");
+  const pendingEdit = useRef<{
+    path: string;
+    code: string;
+    expectedRevision: number;
+  } | null>(null);
+  const editBaseRevision = useRef<{ path: string; revision: number } | null>(
+    null,
   );
-  const pendingEdit = useRef<{ path: string; code: string } | null>(null);
+  const editConflict = useRef(false);
+  const uiFlushInFlight = useRef(false);
   const editTimer = useRef<number | undefined>(undefined);
 
   const refreshMetadata = useCallback(async () => {
@@ -112,6 +121,16 @@ export function useWorkspaceController() {
 
   useEffect(() => {
     const unsubscribe = workspaceFacade.subscribe((next) => {
+      if (pendingEdit.current) {
+        if (
+          !uiFlushInFlight.current &&
+          next.revision !== editBaseRevision.current?.revision
+        ) {
+          editConflict.current = true;
+        }
+        void refreshMetadata();
+        return;
+      }
       setWorkspace(next);
       setSaveState("saved");
       void refreshMetadata();
@@ -130,20 +149,59 @@ export function useWorkspaceController() {
   const flushPendingEdit = useCallback(async () => {
     const pending = pendingEdit.current;
     if (!pending) return;
-    pendingEdit.current = null;
     window.clearTimeout(editTimer.current);
     const current = workspaceFacade.getState();
-    if (current.files[pending.path]?.content === pending.code) return;
+    if (editConflict.current) {
+      pendingEdit.current = null;
+      editBaseRevision.current = null;
+      editConflict.current = false;
+      setWorkspace(current);
+      setSaveState("conflict");
+      return;
+    }
+    if (current.files[pending.path]?.content === pending.code) {
+      pendingEdit.current = null;
+      return;
+    }
     setSaveState("saving");
+    uiFlushInFlight.current = true;
     const result = await workspaceFacade.writeFiles({
       writes: [{ path: pending.path, content: pending.code }],
-      expectedRevision: current.revision,
+      expectedRevision: pending.expectedRevision,
       origin: "ui",
     });
-    if (!result.ok)
+    uiFlushInFlight.current = false;
+    const newerPending = pendingEdit.current;
+    const samePendingContent =
+      newerPending?.path === pending.path && newerPending.code === pending.code;
+    if (result.ok) {
+      if (samePendingContent) {
+        pendingEdit.current = null;
+        editBaseRevision.current = null;
+        setWorkspace(workspaceFacade.getState());
+        setSaveState("saved");
+      } else if (newerPending) {
+        editBaseRevision.current = {
+          path: newerPending.path,
+          revision: result.value.revision,
+        };
+        pendingEdit.current = {
+          ...newerPending,
+          expectedRevision: result.value.revision,
+        };
+      }
+    } else if (samePendingContent) {
+      pendingEdit.current = null;
+      editBaseRevision.current = null;
+      setWorkspace(workspaceFacade.getState());
       setSaveState(
-        result.error.code === "PERSISTENCE_FAILED" ? "memory" : "saved",
+        result.error.code === "REVISION_CONFLICT"
+          ? "conflict"
+          : result.error.code === "PERSISTENCE_FAILED"
+            ? "memory"
+            : "saved",
       );
+    }
   }, []);
 
   const updateActiveFile = useCallback(
@@ -154,7 +212,21 @@ export function useWorkspaceController() {
         current.files[current.activePath]?.content === code
       )
         return;
-      pendingEdit.current = { path: current.activePath, code };
+      const pending = pendingEdit.current;
+      if (pending?.path === current.activePath && pending.code === code) return;
+      const base = editBaseRevision.current;
+      if (!base || base.path !== current.activePath) {
+        editBaseRevision.current = {
+          path: current.activePath,
+          revision: current.revision,
+        };
+      }
+      pendingEdit.current = {
+        path: current.activePath,
+        code,
+        expectedRevision:
+          editBaseRevision.current?.revision ?? current.revision,
+      };
       setSaveState("saving");
       window.clearTimeout(editTimer.current);
       editTimer.current = window.setTimeout(() => void flushPendingEdit(), 450);
@@ -200,6 +272,8 @@ export function useWorkspaceController() {
 
   const resetDemo = useCallback(async () => {
     pendingEdit.current = null;
+    editBaseRevision.current = null;
+    editConflict.current = false;
     window.clearTimeout(editTimer.current);
     await workspaceFacade.resetDemo({
       expectedRevision: workspaceFacade.getState().revision,

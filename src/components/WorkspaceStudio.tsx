@@ -31,7 +31,7 @@ import {
   WifiOff,
   X,
 } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { setPreviewSnapshot } from "../services/preview/runtime";
 import type { RegistrationStatus } from "../webmcp";
 import type { StarterId } from "../starters";
@@ -143,6 +143,45 @@ function RuntimeStatus({
           ? "Building preview…"
           : "Preview ready"}
     </span>
+  );
+}
+
+const PREVIEW_SANDBOX = "allow-scripts allow-same-origin";
+
+function SecureSandpackPreview() {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    const harden = () => {
+      const iframe = containerRef.current?.querySelector("iframe");
+      if (!iframe) return;
+      if (iframe.getAttribute("sandbox") !== PREVIEW_SANDBOX)
+        iframe.setAttribute("sandbox", PREVIEW_SANDBOX);
+      if (iframe.hasAttribute("allow")) iframe.removeAttribute("allow");
+    };
+    const observer = new MutationObserver(harden);
+    if (containerRef.current) {
+      observer.observe(containerRef.current, {
+        attributes: true,
+        attributeFilter: ["allow", "sandbox"],
+        childList: true,
+        subtree: true,
+      });
+    }
+    harden();
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div className="preview-frame" ref={containerRef}>
+      <SandpackPreview
+        showNavigator={false}
+        showOpenInCodeSandbox={false}
+        showOpenNewtab={false}
+        showRefreshButton
+        showRestartButton={false}
+      />
+    </div>
   );
 }
 
@@ -484,7 +523,9 @@ export function WorkspaceStudio({
                 ? "Saving locally…"
                 : controller.saveState === "memory"
                   ? "In-memory only"
-                  : "Saved locally"}
+                  : controller.saveState === "conflict"
+                    ? "Edit conflict — review latest"
+                    : "Saved locally"}
             </span>
             <span className={`tools-status ${siteToolsReady ? "ready" : ""}`}>
               {siteToolsReady ? <Sparkles size={13} /> : <WifiOff size={13} />}
@@ -636,15 +677,7 @@ export function WorkspaceStudio({
               </div>
             </header>
             <div className={`preview-stage ${previewSize}`}>
-              <div className="preview-frame">
-                <SandpackPreview
-                  showNavigator={false}
-                  showOpenInCodeSandbox={false}
-                  showOpenNewtab={false}
-                  showRefreshButton
-                  showRestartButton={false}
-                />
-              </div>
+              <SecureSandpackPreview />
             </div>
             <section
               className={`diagnostics ${diagnostic ? "has-error" : ""}`}

@@ -151,6 +151,14 @@ const stateFromSnapshot = (
   snapshot: WorkspaceSnapshot,
   now: string,
 ): Result<Pick<WorkspaceState, "starterId" | "activePath" | "files">> => {
+  if (snapshot.starterId !== current.starterId) {
+    return failure({
+      code: "PERSISTENCE_FAILED",
+      message: "The checkpoint does not belong to the active starter.",
+      retryable: false,
+      suggestion: "Choose a checkpoint created for the current project.",
+    });
+  }
   const files = validateFiles(snapshot.files, now);
   if (!files.ok) return files;
   let activePath = snapshot.activePath;

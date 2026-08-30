@@ -221,6 +221,16 @@ describe("WebMCP integration", () => {
       data: { id: string };
     };
     expect(checkpoint.ok).toBe(true);
+    expect(Object.keys(checkpoint.data).sort()).toEqual([
+      "createdAt",
+      "id",
+      "kind",
+      "label",
+      "sourceRevision",
+    ]);
+    expect(JSON.stringify(checkpoint.data)).not.toMatch(
+      /snapshot|files|content|projectId/,
+    );
     await tools
       .get("write_files")
       ?.execute({ writes: [{ path: "src/App.tsx", content: "changed" }] });
@@ -229,6 +239,45 @@ describe("WebMCP integration", () => {
       ?.execute({ checkpointId: checkpoint.data.id })) as { ok: boolean };
     expect(restored.ok).toBe(true);
     expect(facade.getState().files["src/App.tsx"].content).toContain("Relay");
+  });
+
+  it("rejects malformed optimistic revisions without side effects", async () => {
+    const tools = toolsByName(
+      createPatchworkTools({ facade, getPreview: () => preview }),
+    );
+    const checkpoint = (await tools
+      .get("create_checkpoint")
+      ?.execute({ label: "Safe baseline" })) as { data: { id: string } };
+    const before = facade.getState();
+
+    const calls = [
+      [
+        "write_files",
+        {
+          writes: [{ path: "src/App.tsx", content: "unsafe" }],
+          expectedRevision: "0",
+        },
+      ],
+      [
+        "move_file",
+        { from: "src/App.tsx", to: "src/Renamed.tsx", expectedRevision: null },
+      ],
+      ["delete_file", { path: "src/App.tsx", expectedRevision: -1 }],
+      [
+        "restore_checkpoint",
+        { checkpointId: checkpoint.data.id, expectedRevision: 0.5 },
+      ],
+    ] as const;
+
+    for (const [name, input] of calls) {
+      const result = (await tools.get(name)?.execute(input)) as {
+        ok: boolean;
+        error: { code: string };
+      };
+      expect(result.ok).toBe(false);
+      expect(result.error.code).toBe("INVALID_INPUT");
+    }
+    expect(facade.getState()).toEqual(before);
   });
 
   it("registers real handlers once and remains stable across hot reload calls", async () => {

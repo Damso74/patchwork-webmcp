@@ -197,17 +197,19 @@ Controls:
 
 ## Release security checklist
 
-- [ ] Path-validity matrix passes.
-- [ ] Unsupported and sensitive filenames are rejected.
-- [ ] Batch atomicity and zero-partial-write tests pass.
-- [ ] Revision-conflict test passes.
-- [ ] Automatic checkpoint and deterministic restore tests pass.
-- [ ] Read-only tools show zero state mutation.
-- [ ] Site Tools register once at top level and never inside the iframe.
-- [ ] No `eval`, `new Function`, or workspace-driven host script injection.
-- [ ] Secret scan result recorded.
-- [ ] Dependency audit result recorded and reviewed.
-- [ ] Production bundle inspected for credentials and unintended endpoints.
+- [x] Path-validity matrix passes.
+- [x] Unsupported and sensitive filenames are rejected.
+- [x] Batch atomicity and zero-partial-write tests pass.
+- [x] Revision-conflict test passes, including edits made during an in-flight save.
+- [x] Automatic checkpoint and deterministic same-starter restore tests pass.
+- [x] Read-only tools show zero state mutation.
+- [x] Site Tools register once at top level and never inside the iframe.
+- [x] No `eval`, `new Function`, or workspace-driven host script injection.
+- [x] Sandpack preview uses the exact `allow-scripts allow-same-origin` sandbox and no capability-policy allowlist.
+- [x] Persisted workspace/checkpoint records are runtime-validated before use.
+- [x] Secret scan result recorded: 75 files passed on 2026-08-30.
+- [x] Dependency audit result recorded and reviewed: 0 npm vulnerabilities on 2026-08-30.
+- [x] Production bundle inspected for credentials and unintended endpoints.
 - [ ] Public repository and deployed artifact contain no secrets.
 
 ## Reporting a vulnerability
