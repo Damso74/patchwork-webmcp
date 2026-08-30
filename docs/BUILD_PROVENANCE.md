@@ -55,6 +55,7 @@ The final list is generated from real commits and must not be backdated or rewri
 9. `chore: ignore vercel local metadata`
 10. `fix: synchronize preview diagnostics for site tools`
 11. `docs: finalize recording runbook`
+12. `docs: record native release verification`
 
 Exact immutable commit identifiers are available in the public repository history; no commit was backdated or rewritten.
 
