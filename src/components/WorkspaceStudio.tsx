@@ -101,12 +101,11 @@ function RuntimeStatus({
 }) {
   const { sandpack } = useSandpack();
   const message = sandpack.error ? String(sandpack.error) : null;
+  const problem = Boolean(message) || sandpack.status === "timeout";
+  const building = sandpack.status === "initial" || sandpack.status === "idle";
 
   useEffect(() => {
     onDiagnostics(message);
-    const problem = Boolean(sandpack.error) || sandpack.status === "timeout";
-    const building =
-      sandpack.status === "running" || sandpack.status === "initial";
     setPreviewSnapshot({
       status: problem ? "error" : building ? "compiling" : "ready",
       errors: message
@@ -121,10 +120,8 @@ function RuntimeStatus({
       renderedRevision: problem ? undefined : revision,
       renderedAt: problem ? undefined : new Date().toISOString(),
     });
-  }, [message, onDiagnostics, revision, sandpack.error, sandpack.status]);
+  }, [building, message, onDiagnostics, problem, revision]);
 
-  const building = sandpack.status === "initial" || sandpack.status === "idle";
-  const problem = Boolean(sandpack.error) || sandpack.status === "timeout";
   return (
     <span
       className={`runtime-state ${problem ? "is-error" : ""}`}

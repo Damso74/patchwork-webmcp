@@ -68,6 +68,17 @@ test("loads the public-facing workspace without blocking console errors", async 
   await page.goto("/?demo=landing");
   await waitForTools(page);
   await expect(page.locator("body")).toContainText("Relay");
+  await expect(page.getByText("Preview ready", { exact: true })).toHaveText(
+    "Preview ready",
+  );
+  const preview = await invoke<{
+    ok: boolean;
+    revision: number;
+    data: { status: string; renderedRevision?: number };
+  }>(page, "inspect_preview", {});
+  expect(preview.ok).toBe(true);
+  expect(preview.data.status).toBe("ready");
+  expect(preview.data.renderedRevision).toBe(preview.revision);
   expect(errors).toEqual([]);
 });
 
@@ -123,7 +134,7 @@ test("uses the real registered handlers for read, atomic write, checkpoint and r
       writes: [
         {
           path: "src/App.tsx",
-          content: `export default function App() { return <main style={{padding: 48, fontFamily: 'sans-serif'}}><h1>Roamly</h1><p>Travel, thoughtfully arranged.</p></main>`,
+          content: `export default function App() { return (<main style={{ padding: 48, fontFamily: 'sans-serif' }}><h1>Roamly</h1><p>Travel, thoughtfully arranged.</p></main>); }`,
         },
       ],
       expectedRevision: context.revision,
