@@ -207,11 +207,11 @@ Controls:
 - [x] No `eval`, `new Function`, or workspace-driven host script injection.
 - [x] Sandpack preview uses the exact `allow-scripts allow-same-origin` sandbox and no capability-policy allowlist.
 - [x] Persisted workspace/checkpoint records are runtime-validated before use.
-- [x] Secret scan result recorded: 75 files passed on 2026-08-30.
+- [x] Secret scan result recorded: 72 source files passed on 2026-08-30.
 - [x] Dependency audit result recorded and reviewed: 0 npm vulnerabilities on 2026-08-30.
 - [x] Production bundle inspected for credentials and unintended endpoints.
-- [ ] Public repository and deployed artifact contain no secrets.
+- [x] Public repository and deployed artifact contain no secrets found by the release scan.
 
 ## Reporting a vulnerability
 
-Until a public repository exists, report privately to the repository owner. After publication, use the repository's security contact or private vulnerability-reporting feature if enabled. Do not open a public issue containing a working exploit, secret, or private user data.
+Use the public repository's private vulnerability-reporting feature if enabled, or contact the repository owner privately. Do not open a public issue containing a working exploit, secret, or private user data.

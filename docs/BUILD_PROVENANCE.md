@@ -4,7 +4,7 @@
 
 - **Real start date:** August 30, 2026
 - **Context:** new project created during the WebMCP Challenge submission window
-- **Repository:** new standalone Git history; no ArcadeOps or other project history copied
+- **Repository:** [github.com/Damso74/patchwork-webmcp](https://github.com/Damso74/patchwork-webmcp), with new standalone Git history; no ArcadeOps or other project history copied
 - **License:** MIT
 - **Primary language:** TypeScript with strict compiler settings
 
@@ -49,8 +49,11 @@ The final list is generated from real commits and must not be backdated or rewri
 3. `docs: capture challenge requirements and product design`
 4. `feat: add workspace UI previews and webmcp tools`
 5. `test: verify webmcp contracts and golden path`
+6. `fix: harden workspace and preview boundaries`
+7. `docs: prepare challenge submission and demo`
+8. `test: verify public release candidate`
 
-Security hardening and final release-documentation commits are appended after their successful verification. Exact immutable commit identifiers are available in the public repository history; no commit was backdated or rewritten.
+Exact immutable commit identifiers are available in the public repository history; no commit was backdated or rewritten.
 
 ## Validation truth gate
 

@@ -7,8 +7,9 @@ This file is reduced as automation completes. It never treats legal acceptance o
 1. Open the verified live URL in ChatGPT's built-in browser.
 2. Follow `docs/VIDEO_SCRIPT.md`; keep the final cut between 2:30 and 2:45.
 3. Show the real Site Tools panel and real calls. Do not substitute Playwright adapter footage.
-4. Upload to YouTube as **Public** with audio and no copyrighted music.
-5. Paste the final URL into README, `docs/DEVPOST_SUBMISSION.md`, and the Devpost draft.
+4. Record the date, app version, discovered tool count, revision, changed files, diagnostics, and restore/export result in `docs/VERIFICATION.md`.
+5. Upload to YouTube as **Public** with audio and no copyrighted music.
+6. Paste the final URL into README, `docs/DEVPOST_SUBMISSION.md`, and the Devpost draft.
 
 ## 2. Confirm eligibility and submit Devpost — about 4 minutes
 
@@ -17,7 +18,3 @@ This file is reduced as automation completes. It never treats legal acceptance o
 3. Paste the prepared English copy from `docs/DEVPOST_SUBMISSION.md` into the official form.
 4. Submit before September 3, 2026 at 13:00 PDT / 20:00 UTC / 22:00 Berlin.
 5. Save the Devpost receipt. Do not edit the submitted repository, site, or entry during judging.
-
-## 3. Real ChatGPT Site Tools verification — about 3 minutes
-
-If it was not completed during recording, run the canonical prompt from README in the latest desktop app with Sol or Terra and add the truthful result to `docs/VERIFICATION.md`. This remains distinct from the automated WebMCP adapter tests.

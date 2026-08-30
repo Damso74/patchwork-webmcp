@@ -94,22 +94,22 @@ React 19, TypeScript, Vite, CodeSandbox Sandpack, IndexedDB, idb, JSZip, Vitest,
 
 ## Links
 
-- Live demo: `[LIVE_URL — not confirmed]`
-- Public repository: `[REPOSITORY_URL — not confirmed]`
+- Live demo: `https://patchwork-webmcp.vercel.app/?demo=landing`
+- Public repository: `https://github.com/Damso74/patchwork-webmcp`
 - Public YouTube video: `[VIDEO_URL — not uploaded]`
-- Submitted commit or tag: `[FINAL_COMMIT_OR_TAG — not confirmed]`
+- Submitted tag: `v1.0.0-webmcp-challenge`
 
 ## Repository
 
-`[REPOSITORY_URL — not confirmed]`
+`https://github.com/Damso74/patchwork-webmcp`
 
-The repository must be public and show the MIT license before this field is submitted.
+Verified public without authentication; GitHub detects the MIT license.
 
 ## Live demo
 
-`[LIVE_URL — not confirmed]`
+`https://patchwork-webmcp.vercel.app/?demo=landing`
 
-Recommended deterministic route: `[LIVE_URL]?demo=landing`
+Other deterministic routes: `?demo=dashboard` and `?demo=travel`.
 
 ## Video
 
@@ -119,7 +119,7 @@ Required state before submission: public YouTube visibility, clear audio, functi
 
 ## Testing instructions
 
-1. Open `[LIVE_URL]?demo=landing` in the latest ChatGPT desktop app's built-in browser. Use GPT-5.6 Sol or Terra and a workspace where Site Tools are available.
+1. Open `https://patchwork-webmcp.vercel.app/?demo=landing` in the latest ChatGPT desktop app's built-in browser. Use GPT-5.6 Sol or Terra and a workspace where Site Tools are available.
 2. Select **Reset demo** to load the deterministic landing baseline.
 3. Open Site Tools from the browser address bar and inspect the registered Patchwork tools.
 4. Paste this prompt:
@@ -134,11 +134,11 @@ Alternative Chrome test: use Chrome 149+ with `chrome://flags/#enable-webmcp-tes
 
 ## Privacy and data handling
 
-Patchwork's MVP has no project backend, user account, direct OpenAI API call, or requested API key. Workspace state and checkpoints are stored in the browser's IndexedDB for the current origin. Activity records operation metadata, not file contents. Project data leaves Patchwork only through an explicit local ZIP download or through the normal behavior of the user's browser/agent environment. Any runtime requests made by the final Sandpack build must be documented in the repository before submission.
+Patchwork's MVP has no project backend, user account, direct OpenAI API call, or requested API key. Workspace state and checkpoints are stored in the browser's IndexedDB for the current origin. Activity records operation metadata, not file contents. The source needed for preview compilation is processed by the third-party CodeSandbox Sandpack runtime; users should not place secrets or sensitive production code in this demo. ZIP export stays local to the browser.
 
 ## Open-source license
 
-MIT License. Confirm repository license detection before submission: `[LICENSE_VISIBILITY — not confirmed]`.
+MIT License, detected on the public GitHub repository.
 
 ## Disclaimer
 
@@ -146,11 +146,11 @@ Patchwork is an independent project and is not affiliated with or endorsed by Op
 
 ## Final factual checklist
 
-- [ ] Every described feature exists in the submitted build.
-- [ ] All validation results are recorded with exact pass/fail/not-run status.
-- [ ] Real ChatGPT testing is described accurately and not replaced by adapter evidence.
-- [ ] Live URL works in a clean, signed-out context.
-- [ ] Public repository exposes source, instructions, and detectable MIT license.
+- [x] Every described feature exists in the submitted build.
+- [x] All validation results are recorded with exact pass/fail/not-run status.
+- [x] Real ChatGPT testing is described accurately and not replaced by adapter evidence.
+- [x] Live URL works in a clean, signed-out context.
+- [x] Public repository exposes source, instructions, and detectable MIT license.
 - [ ] Video URL is public and runtime is strictly below three minutes.
 - [ ] Placeholders are removed.
 - [ ] Submitted artifacts are frozen after the deadline.

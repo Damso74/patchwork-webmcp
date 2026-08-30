@@ -56,6 +56,21 @@ test.beforeEach(async ({ page }) => {
   await injectSiteTools(page);
 });
 
+test("loads the public-facing workspace without blocking console errors", async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on("console", (message) => {
+    if (message.type() === "error") errors.push(message.text());
+  });
+  page.on("pageerror", (error) => errors.push(error.message));
+
+  await page.goto("/?demo=landing");
+  await waitForTools(page);
+  await expect(page.locator("body")).toContainText("Relay");
+  expect(errors).toEqual([]);
+});
+
 test("loads every deterministic starter", async ({ page }) => {
   for (const [demo, name] of [
     ["landing", "Relay"],
