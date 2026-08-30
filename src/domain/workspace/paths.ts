@@ -9,6 +9,8 @@ import { failure, success, type Result } from "./errors";
 import type { ProjectPath } from "./types";
 
 const encodedAmbiguity = /%(?:2e|2f|5c)/i;
+// Matching control bytes is intentional: they are invalid in project paths.
+// eslint-disable-next-line no-control-regex
 const controlCharacter = /[\u0000-\u001f\u007f]/;
 
 const pathFailure = (message: string, path: string): Result<ProjectPath> =>
