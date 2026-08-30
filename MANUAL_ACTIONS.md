@@ -2,14 +2,14 @@
 
 This file is reduced as automation completes. It never treats legal acceptance or an adapter-based test as a human confirmation.
 
-## 1. Record and upload the final demo video — about 8 minutes plus recording
+## 1. Review and upload the finished demo video — about 4 minutes plus upload time
 
-1. Open the verified live URL in ChatGPT's built-in browser.
-2. Follow `docs/VIDEO_SCRIPT.md`; keep the final cut between 2:30 and 2:45.
-3. Show the real Site Tools panel and real calls. Do not substitute Playwright adapter footage.
-4. Record the date, app version, discovered tool count, revision, changed files, diagnostics, and restore/export result in `docs/VERIFICATION.md`.
-5. Upload to YouTube as **Public** with audio and no copyrighted music.
-6. Paste the final URL into README, `docs/DEVPOST_SUBMISSION.md`, and the Devpost draft.
+1. Play `artifacts/video/patchwork-demo-under-2min.mp4` completely with sound. Confirm that the account-owned ElevenLabs voice and the explicit automated-walkthrough label are acceptable.
+2. Upload that file to YouTube as **Public** with the title and description from `docs/VIDEO_SCRIPT.md`.
+3. Upload `docs/assets/video/patchwork-video-thumbnail.png` as the thumbnail and `docs/assets/video/patchwork-demo.en.srt` as English captions.
+4. Verify the public link signed out, then paste it into README, `docs/DEVPOST_SUBMISSION.md`, and the Devpost draft.
+
+The encode is already measured at **1:53.320**, 1920×1080, H.264/AAC, with no copyrighted music. A native ChatGPT screen take remains optional; never describe the automated take as a ChatGPT conversation.
 
 ## 2. Confirm eligibility and submit Devpost — about 4 minutes
 

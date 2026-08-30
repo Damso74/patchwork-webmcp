@@ -13,7 +13,7 @@ This document is updated from actual command output. `Passed` is never used for 
 | Integration tests | `npm run test:integration` | Passed | included in the final 46-test Vitest run on 2026-08-30        |
 | Production build  | `npm run build`            | Passed | Vite production build completed; size warning is non-blocking |
 | E2E laptop/tablet | `npm run test:e2e`         | Passed | 16 Playwright scenarios passed across laptop and tablet       |
-| Secret scan       | `npm run scan:secrets`     | Passed | 72 source files scanned on 2026-08-30                         |
+| Secret scan       | `npm run scan:secrets`     | Passed | 77 source files scanned on 2026-08-30                         |
 | Dependency audit  | `npm run audit:deps`       | Passed | npm reported 0 vulnerabilities on 2026-08-30                  |
 
 ## Browser and release evidence
@@ -27,7 +27,10 @@ This document is updated from actual command output. `Passed` is never used for 
 | Exact GitHub/Vercel commit match              | Passed  | Vercel deployment metadata matched the pushed `main` SHA                      |
 | Native in-app discovery and read-only preview | Passed  | 10 tools; UI, context, and `inspect_preview` all reported `ready`             |
 | Native production mutation and stability      | Passed  | Two-file atomic write, visible preview update, one revision, stable after 5 s |
-| Clean-profile canonical recording take        | Not run | Reserved for the actual screen recording in a fresh browser context           |
+| Native clean-origin canonical run             | Passed  | Two fresh deployment origins completed revision 0 → 1 with three files        |
+| Labeled automated walkthrough                 | Passed  | Same registered handlers; clean profile; proof receipt; 0 preview diagnostics |
+| Final 1080p video encode                      | Passed  | H.264/AAC, 1920×1080, 1:53.320, 11.6 MB, SHA-256 recorded                     |
+| Public video upload                           | Not run | Requires final human sound/image review and action-time publication approval  |
 
 ## Security review
 
@@ -40,6 +43,10 @@ The native preflight then revealed that the visible UI reported `Preview ready` 
 The first full Roamly rehearsal against release 1.0.1 exposed a separate production-only feedback bug: after a native WebMCP write, a stale Sandpack editor buffer could be mistaken for a human edit and repeatedly create workspace revisions. That rehearsal is recorded as failed evidence, not as a pass. Release 1.0.2 makes the workspace state authoritative for programmatic synchronization, permits domain writes only after actual editor input, and retries preview synchronization once the Sandpack client is ready. The E2E regression asserts that a native-handler write remains at exactly one new revision and that an invalid Site Tools write reaches preview diagnostics before a repair clears it.
 
 Production release 1.0.2 was then verified in the Codex in-app browser on 2026-08-30. All 10 top-level tools were discovered. The persisted Roamly project rendered successfully, `read_files` observed revision 1247, `create_checkpoint` preserved that revision, and one atomic `write_files` call changed `src/App.tsx` plus `src/styles.css` at revision 1248. The new CTA was visible in the preview, `inspect_preview` returned `ready` with `renderedRevision: 1248` and no diagnostics, and two context reads five seconds apart both remained at revision 1248. Deployment `dpl_J2daFX9Sm6JTSQm3ZAwuoBLiAbVK` was `READY` on the Hobby plan and reported Git commit `252d3a83a77d2891464818c99e5039b18c57e210`.
+
+Two subsequent clean-origin native runs completed the canonical Roamly transformation at revision 0 → 1. Each run created the requested manual checkpoint, changed `src/App.tsx`, `src/content.ts`, and `src/styles.css` in one atomic write, rendered the new preview, and returned `ready` with no errors or warnings. The revision remained stable after completion.
+
+The final automated walkthrough was then produced from a fresh Playwright profile against the public production page. The adapter was injected before load and captured the exact ten definitions registered by the application; it did not provide a second handler implementation. The machine-readable receipt records revision 0 reads, a manual checkpoint, one automatic checkpoint, a three-file atomic write at revision 1, `inspect_preview` at rendered revision 1, and zero preview errors or warnings. The overlay identifies the run as automated. A single external resource timeout appeared in the capture console while the Sandpack preview remained ready; it is retained as non-blocking evidence rather than hidden. The final encode is 113.320 seconds at 1920×1080 with H.264 video and AAC narration.
 
 ## Required manual ChatGPT run
 

@@ -90,7 +90,7 @@ After the challenge build is frozen, potential follow-ups include a small public
 
 ## Built with
 
-React 19, TypeScript, Vite, CodeSandbox Sandpack, IndexedDB, idb, JSZip, Vitest, Testing Library, Playwright, Oxlint, Prettier, and WebMCP Site Tools.
+React 19, TypeScript, Vite, CodeSandbox Sandpack, IndexedDB, idb, JSZip, Vitest, Testing Library, Playwright, Oxlint, Prettier, and WebMCP Site Tools. ElevenLabs was used only for the English demo narration.
 
 ## Links
 
@@ -115,7 +115,7 @@ Other deterministic routes: `?demo=dashboard` and `?demo=travel`.
 
 `[VIDEO_URL — not uploaded]`
 
-Required state before submission: public YouTube visibility, clear audio, functioning demo, and duration strictly below three minutes.
+The finished local encode is 1:53.320 at 1920×1080 with clear ElevenLabs narration and no copyrighted music. It is labeled as an automated WebMCP walkthrough using the same production-registered handlers; it is not presented as a ChatGPT conversation. Required state before submission: complete human sound/image review and public YouTube visibility.
 
 ## Testing instructions
 
@@ -151,6 +151,7 @@ Patchwork is an independent project and is not affiliated with or endorsed by Op
 - [x] Real ChatGPT testing is described accurately and not replaced by adapter evidence.
 - [x] Live URL works in a clean, signed-out context.
 - [x] Public repository exposes source, instructions, and detectable MIT license.
-- [ ] Video URL is public and runtime is strictly below three minutes.
+- [x] Video runtime is strictly below three minutes: 1:53.320 measured.
+- [ ] Video URL is public and verified signed out.
 - [ ] Placeholders are removed.
 - [ ] Submitted artifacts are frozen after the deadline.

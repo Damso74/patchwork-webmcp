@@ -87,6 +87,7 @@ npm run test
 npm run build
 npx playwright install chromium
 npm run test:e2e
+npm run record:demo
 npm run scan:secrets
 npm run audit:deps
 ```
@@ -124,7 +125,8 @@ Patchwork is intentionally a small-project demo. It supports allowlisted text fi
 
 - Live demo: [patchwork-webmcp.vercel.app](https://patchwork-webmcp.vercel.app/?demo=landing)
 - Public repository: [github.com/Damso74/patchwork-webmcp](https://github.com/Damso74/patchwork-webmcp)
-- Demo video: **pending manual recording and public YouTube upload**
+- Demo video: **finished 1:53 local encode; pending final human sound/image review and public YouTube upload**
+- [Video thumbnail and asset provenance](docs/assets/video/README.md)
 - [Official requirements evidence](docs/HACKATHON_REQUIREMENTS.md)
 - [Demo runbook](docs/DEMO_RUNBOOK.md)
 - [Video script](docs/VIDEO_SCRIPT.md)

@@ -39,6 +39,9 @@ See `package-lock.json` for the exact reproducible graph.
 - Lucide icons: used under the Lucide ISC license through the npm package.
 - No OpenAI marks, copied interfaces, stock images, copyrighted music, or remote commercial assets.
 - Preview starter font requests, if present, use Google Fonts; the final submission video should avoid showing third-party branding.
+- English narration was generated on 2026-08-30 with the account-owned `Damien Voice` in ElevenLabs Multilingual v2. No voice was created, replaced, renamed, or deleted.
+- The 16:9 thumbnail was generated specifically for Patchwork with OpenAI image generation, then edited through the same workflow for exact typography. It contains no OpenAI mark or copied interface.
+- The final walkthrough contains no copyrighted music. Its Playwright adapter label and machine-readable proof keep the automated footage distinct from native ChatGPT evidence.
 
 ## Natural commit history
 
@@ -58,6 +61,7 @@ The final list is generated from real commits and must not be backdated or rewri
 12. `docs: record native release verification`
 13. `fix: prevent sandpack feedback writes`
 14. `docs: record native Roamly rehearsal`
+15. `docs: produce the under-two-minute demo kit`
 
 Exact immutable commit identifiers are available in the public repository history; no commit was backdated or rewritten.
 
