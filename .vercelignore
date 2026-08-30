@@ -1,0 +1,5 @@
+artifacts/
+coverage/
+docs/assets/video/
+playwright-report/
+test-results/
