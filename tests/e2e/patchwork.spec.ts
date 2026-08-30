@@ -145,6 +145,14 @@ test("uses the real registered handlers for read, atomic write, checkpoint and r
     `Revision ${updated.revision}`,
   );
   await expect(page.locator(".cm-content")).toContainText("Roamly");
+  await page.waitForTimeout(1_000);
+  const stable = await invoke<{ ok: boolean; revision: number }>(
+    page,
+    "get_workspace_context",
+    {},
+  );
+  expect(stable.ok).toBe(true);
+  expect(stable.revision).toBe(updated.revision);
 
   const restored = await invoke<{ ok: boolean }>(page, "restore_checkpoint", {
     checkpointId: checkpoint.data.id,
@@ -200,12 +208,23 @@ test("shows an error introduced through Site Tools and clears it after repair", 
     {},
   );
 
-  await invoke(page, "write_files", {
-    writes: [
-      { path: "src/App.tsx", content: "export default function App( {" },
-    ],
-    expectedRevision: initial.revision,
-  });
+  const invalidWrite = await invoke<{ ok: boolean; revision: number }>(
+    page,
+    "write_files",
+    {
+      writes: [
+        { path: "src/App.tsx", content: "export default function App( {" },
+      ],
+      expectedRevision: initial.revision,
+    },
+  );
+  expect(invalidWrite.ok).toBe(true);
+  await expect(page.locator(".cm-content")).toContainText(
+    "export default function App( {",
+  );
+  await expect(page.locator(".revision-pill")).toContainText(
+    `Revision ${invalidWrite.revision}`,
+  );
   if (testInfo.project.name === "tablet") {
     await page.getByRole("button", { name: "Preview", exact: true }).click();
   }

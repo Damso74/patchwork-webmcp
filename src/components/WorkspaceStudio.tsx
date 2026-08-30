@@ -44,14 +44,18 @@ function WorkspaceBridge({
   files,
   activeFile,
   onCodeChange,
+  humanEditRef,
 }: {
   files: Record<string, string>;
   activeFile: string;
   onCodeChange: (code: string) => void;
+  humanEditRef: { current: boolean };
 }) {
   const { sandpack } = useSandpack();
   const { code } = useActiveCode();
   const sandpackRef = useRef(sandpack);
+  const localEditRef = useRef<{ path: string; content: string } | null>(null);
+  const previewSyncTimerRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     sandpackRef.current = sandpack;
@@ -60,17 +64,55 @@ function WorkspaceBridge({
   useEffect(() => {
     const runtime = sandpackRef.current;
     const changed: Record<string, string> = {};
+    let runtimeChanged = false;
     for (const [path, content] of Object.entries(files)) {
-      if (!runtime.files[path]) runtime.addFile(path, content, false);
-      else if (runtime.files[path].code !== content) changed[path] = content;
+      if (!runtime.files[path]) {
+        runtime.addFile(path, content, true);
+        runtimeChanged = true;
+      } else if (runtime.files[path].code !== content) changed[path] = content;
     }
     for (const path of Object.keys(runtime.files)) {
-      if (path.startsWith("/src/") && !(path in files))
-        runtime.deleteFile(path, false);
+      if (path.startsWith("/src/") && !(path in files)) {
+        runtime.deleteFile(path, true);
+        runtimeChanged = true;
+      }
     }
-    if (Object.keys(changed).length)
-      runtime.updateFile(changed, undefined, true);
-  }, [files]);
+    for (const [path, content] of Object.entries(changed)) {
+      runtime.updateFile(path, content, true);
+      runtimeChanged = true;
+    }
+
+    window.clearTimeout(previewSyncTimerRef.current);
+    if (!runtimeChanged) return;
+
+    let attempts = 0;
+    const syncWhenPreviewReady = () => {
+      const current = sandpackRef.current;
+      const clients = Object.values(current.clients);
+      if (
+        (clients.length === 0 ||
+          clients.some((client) => client.status !== "done")) &&
+        attempts < 50
+      ) {
+        attempts += 1;
+        previewSyncTimerRef.current = window.setTimeout(
+          syncWhenPreviewReady,
+          100,
+        );
+        return;
+      }
+      for (const [path, content] of Object.entries(files)) {
+        if (!current.files[path]) current.addFile(path, content, true);
+        else current.updateFile(path, content, true);
+      }
+      for (const path of Object.keys(current.files)) {
+        if (path.startsWith("/src/") && !(path in files))
+          current.deleteFile(path, true);
+      }
+    };
+    syncWhenPreviewReady();
+    return () => window.clearTimeout(previewSyncTimerRef.current);
+  }, [activeFile, files]);
 
   useEffect(() => {
     const runtime = sandpackRef.current;
@@ -80,14 +122,33 @@ function WorkspaceBridge({
   }, [activeFile]);
 
   useEffect(() => {
-    if (
-      sandpack.activeFile === activeFile &&
-      files[activeFile] !== undefined &&
-      code !== files[activeFile]
-    ) {
-      onCodeChange(code);
+    const authoritative = files[activeFile];
+    if (sandpack.activeFile !== activeFile || authoritative === undefined)
+      return;
+
+    const localEdit = localEditRef.current;
+    if (localEdit?.path === activeFile && authoritative === localEdit.content) {
+      localEditRef.current = null;
     }
-  }, [activeFile, code, files, onCodeChange, sandpack.activeFile]);
+    if (code === authoritative) return;
+
+    if (humanEditRef.current) {
+      humanEditRef.current = false;
+      localEditRef.current = { path: activeFile, content: code };
+      onCodeChange(code);
+      return;
+    }
+    if (localEdit?.path === activeFile && code === localEdit.content) return;
+
+    sandpackRef.current.updateFile(activeFile, authoritative, true);
+  }, [
+    activeFile,
+    code,
+    files,
+    humanEditRef,
+    onCodeChange,
+    sandpack.activeFile,
+  ]);
 
   return null;
 }
@@ -144,6 +205,7 @@ function RuntimeStatus({
 }
 
 const PREVIEW_SANDBOX = "allow-scripts allow-same-origin";
+const SANDPACK_CUSTOM_SETUP = { entry: "/src/main.tsx" } as const;
 
 function SecureSandpackPreview() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -464,28 +526,29 @@ export function WorkspaceStudio({
   const [previewSize, setPreviewSize] = useState<"desktop" | "tablet">(
     "desktop",
   );
+  const humanEditRef = useRef(false);
 
   const siteToolsReady = siteToolsStatus === "ready";
 
   const visibleFiles = Object.keys(controller.files);
   const latestActivity = controller.activities[0];
-  const sandpackFiles = useMemo(
+  const sandpackSeedFiles = useMemo(
     () =>
       Object.fromEntries(
-        Object.entries(controller.files).map(([path, code]) => [
+        Object.entries(controller.starter.files).map(([path, code]) => [
           path,
           { code },
         ]),
       ),
-    [controller.files],
+    [controller.starter.files],
   );
 
   return (
     <SandpackProvider
       key={controller.starter.id}
       template="react-ts"
-      files={sandpackFiles}
-      customSetup={{ entry: "/src/main.tsx" }}
+      files={sandpackSeedFiles}
+      customSetup={SANDPACK_CUSTOM_SETUP}
       options={{
         activeFile: controller.activeFile,
         visibleFiles,
@@ -499,6 +562,7 @@ export function WorkspaceStudio({
         files={controller.files}
         activeFile={controller.activeFile}
         onCodeChange={controller.updateActiveFile}
+        humanEditRef={humanEditRef}
       />
       <div className="patchwork-app">
         <header className="topbar">
@@ -621,7 +685,26 @@ export function WorkspaceStudio({
                 {controller.activeFile.split(".").pop()?.toUpperCase()}
               </span>
             </header>
-            <div className="editor-canvas">
+            <div
+              className="editor-canvas"
+              onBeforeInputCapture={() => {
+                humanEditRef.current = true;
+              }}
+              onPasteCapture={() => {
+                humanEditRef.current = true;
+              }}
+              onCutCapture={() => {
+                humanEditRef.current = true;
+              }}
+              onKeyDownCapture={(event) => {
+                if (
+                  event.key === "Backspace" ||
+                  event.key === "Delete" ||
+                  event.key === "Enter"
+                )
+                  humanEditRef.current = true;
+              }}
+            >
               <SandpackCodeEditor
                 showTabs={false}
                 showLineNumbers
