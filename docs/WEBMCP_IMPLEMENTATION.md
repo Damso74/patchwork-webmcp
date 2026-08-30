@@ -200,7 +200,7 @@ Native read-only preflight evidence recorded before the full filmed mutation:
 - Live URL: `https://patchwork-webmcp.vercel.app/?demo=landing`
 - Prompt: canonical Roamly prompt from `docs/DEMO_RUNBOOK.md`
 - Discovered tools: `10`, registered from the top-level page
-- Result: `PARTIAL PASS` — native discovery and read-only context/preview calls succeeded; the full Roamly write/checkpoint/repair sequence remains not run until rehearsal or recording
+- Result: `PASS for native production mutation` — discovery, reads, checkpoint, an atomic two-file write, visible preview update, diagnostics, and five-second revision stability succeeded on release 1.0.2. The clean-profile canonical take remains the recording step; see `docs/VERIFICATION.md` for the failed 1.0.1 rehearsal and exact 1.0.2 evidence.
 
 An adapter-based test is valuable automated evidence, but it must always be labeled as adapter-based and never presented as a real ChatGPT Site Tools session.
 

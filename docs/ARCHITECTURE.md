@@ -155,4 +155,4 @@ The production artifact is a static Vite build suitable for Vercel or another st
 
 - Live application: `https://patchwork-webmcp.vercel.app/`
 - Public repository: `https://github.com/Damso74/patchwork-webmcp`
-- Submitted tag: `v1.0.1-webmcp-challenge`
+- Submitted tag: `v1.0.2-webmcp-challenge`

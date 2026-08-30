@@ -97,7 +97,7 @@ React 19, TypeScript, Vite, CodeSandbox Sandpack, IndexedDB, idb, JSZip, Vitest,
 - Live demo: `https://patchwork-webmcp.vercel.app/?demo=landing`
 - Public repository: `https://github.com/Damso74/patchwork-webmcp`
 - Public YouTube video: `[VIDEO_URL — not uploaded]`
-- Submitted tag: `v1.0.1-webmcp-challenge`
+- Submitted tag: `v1.0.2-webmcp-challenge`
 
 ## Repository
 

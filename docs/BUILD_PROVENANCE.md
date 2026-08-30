@@ -56,6 +56,8 @@ The final list is generated from real commits and must not be backdated or rewri
 10. `fix: synchronize preview diagnostics for site tools`
 11. `docs: finalize recording runbook`
 12. `docs: record native release verification`
+13. `fix: prevent sandpack feedback writes`
+14. `docs: record native Roamly rehearsal`
 
 Exact immutable commit identifiers are available in the public repository history; no commit was backdated or rewritten.
 
