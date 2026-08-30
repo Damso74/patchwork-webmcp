@@ -52,6 +52,9 @@ The final list is generated from real commits and must not be backdated or rewri
 6. `fix: harden workspace and preview boundaries`
 7. `docs: prepare challenge submission and demo`
 8. `test: verify public release candidate`
+9. `chore: ignore vercel local metadata`
+10. `fix: synchronize preview diagnostics for site tools`
+11. `docs: finalize recording runbook`
 
 Exact immutable commit identifiers are available in the public repository history; no commit was backdated or rewritten.
 

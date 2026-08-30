@@ -4,16 +4,16 @@
 
 Run this demo only against a verified build. Do not substitute the Playwright adapter for a real ChatGPT Site Tools session without labeling it clearly. Update the placeholders below before recording or submitting.
 
-- Live URL: `[LIVE_URL — not confirmed]`
-- Repository: `[REPOSITORY_URL — not confirmed]`
-- Submitted revision: `[FINAL_COMMIT_OR_TAG — not confirmed]`
-- Real ChatGPT test: `[NOT RUN / PASS / FAIL — add date and notes]`
+- Live URL: `https://patchwork-webmcp.vercel.app/`
+- Repository: `https://github.com/Damso74/patchwork-webmcp`
+- Submitted revision: `v1.0.1-webmcp-challenge`
+- Real ChatGPT test: `PARTIAL PASS — native read-only Site Tools preflight on 2026-08-30; full Roamly mutation run not yet recorded`
 
 ## Canonical entry points
 
-- Landing transformation: `[LIVE_URL]?demo=landing`
-- Dashboard: `[LIVE_URL]?demo=dashboard`
-- Travel planner: `[LIVE_URL]?demo=travel`
+- Landing transformation: `https://patchwork-webmcp.vercel.app/?demo=landing`
+- Dashboard: `https://patchwork-webmcp.vercel.app/?demo=dashboard`
+- Travel planner: `https://patchwork-webmcp.vercel.app/?demo=travel`
 
 Use a clean browser context for judging checks. Confirm that each URL loads the requested starter directly and that Reset demo reproduces the same files and content.
 
@@ -36,7 +36,7 @@ Use a clean browser context for judging checks. Confirm that each URL loads the 
 
 ### 1. Open and reset
 
-1. Open `[LIVE_URL]?demo=landing` in ChatGPT's built-in browser.
+1. Open `https://patchwork-webmcp.vercel.app/?demo=landing` in ChatGPT's built-in browser.
 2. Wait for local restoration and preview readiness.
 3. Select **Reset demo** and confirm the deterministic landing baseline.
 4. Point out Files, Code, Preview, Diagnostics, and Activity.

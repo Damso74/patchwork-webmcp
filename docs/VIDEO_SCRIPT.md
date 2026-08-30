@@ -4,8 +4,8 @@
 
 - Target duration: **2:40**; the official limit is strictly under 3:00.
 - Public YouTube URL: `[VIDEO_URL — not uploaded]`
-- Live app URL: `[LIVE_URL — not confirmed]`
-- Repository URL: `[REPOSITORY_URL — not confirmed]`
+- Live app URL: `https://patchwork-webmcp.vercel.app/`
+- Repository URL: `https://github.com/Damso74/patchwork-webmcp`
 
 Record only after the features named below pass the release checklist. Remove or rewrite any line that is not true of the submitted build. Adapter footage must be labeled as adapter footage and must not imitate a real ChatGPT session.
 
@@ -33,7 +33,7 @@ No embedded chatbot · No API key · No separate MCP server
 
 ### 0:15–0:35 — Shared workspace
 
-**Picture:** Pan across Files, Code, Preview, Diagnostics, and Activity. Switch once between landing and dashboard, then return to landing and reset.
+**Picture:** Pan across Files, Code, Preview, Diagnostics, and Activity while staying on the landing starter.
 
 **On-screen text:** `Local-first browser workspace · React + TypeScript · IndexedDB`
 
@@ -93,14 +93,14 @@ No embedded chatbot · No API key · No separate MCP server
 
 ### 2:30–2:40 — Close
 
-**Picture:** Finished Roamly preview beside the file tree. End card with real URLs inserted before recording.
+**Picture:** Finished Roamly preview beside the file tree. End card with the verified live and source URLs.
 
 **On-screen text:**
 
 ```text
 Patchwork
-[LIVE_URL]
-[REPOSITORY_URL]
+https://patchwork-webmcp.vercel.app/
+https://github.com/Damso74/patchwork-webmcp
 Independent project — not affiliated with or endorsed by OpenAI
 ```
 
@@ -110,7 +110,7 @@ Independent project — not affiliated with or endorsed by OpenAI
 
 ## Expected click order
 
-1. Open `[LIVE_URL]?demo=landing`.
+1. Open `https://patchwork-webmcp.vercel.app/?demo=landing`.
 2. Reset demo.
 3. Show the five workspace regions.
 4. Open Site Tools and show registered names.
@@ -140,7 +140,7 @@ The landing starter becomes a responsive Roamly page with a warm Indonesian trav
 - [ ] All visible features used in narration verified.
 - [ ] Final URL and repository placeholders replaced.
 - [ ] No secret, notification, personal tab, local username, or private path visible.
-- [ ] Video canvas is 1080p or higher and text remains legible.
+- [ ] Video canvas is preferably 1440p (1080p minimum) and editor text remains legible after compression.
 - [ ] Narration and browser audio are clear.
 - [ ] Runtime is below 2:50 before upload.
 - [ ] No copyrighted music.
@@ -159,8 +159,8 @@ Patchwork is a local-first browser workspace where a person and their existing C
 
 No embedded chatbot. No OpenAI API key. No extension. No separate MCP server.
 
-Live demo: [LIVE_URL]
-Source: [REPOSITORY_URL]
+Live demo: https://patchwork-webmcp.vercel.app/?demo=landing
+Source: https://github.com/Damso74/patchwork-webmcp
 
 Built for the OpenAI WebMCP Challenge. Patchwork is an independent project and is not affiliated with or endorsed by OpenAI.
 ```

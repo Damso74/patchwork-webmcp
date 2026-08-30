@@ -153,8 +153,6 @@ This division keeps the agent tool free of surprising browser side effects.
 
 The production artifact is a static Vite build suitable for Vercel or another static host. Client-side query parameters select demos, so no server-side state or rewrites are required beyond serving the application entry point.
 
-Use these placeholders until release verification supplies real values:
-
-- Live application: `[LIVE_URL — not confirmed]`
-- Public repository: `[REPOSITORY_URL — not confirmed]`
-- Submitted commit/tag: `[FINAL_REVISION — not confirmed]`
+- Live application: `https://patchwork-webmcp.vercel.app/`
+- Public repository: `https://github.com/Damso74/patchwork-webmcp`
+- Submitted tag: `v1.0.1-webmcp-challenge`

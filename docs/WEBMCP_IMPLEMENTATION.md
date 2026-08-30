@@ -192,15 +192,15 @@ Integration coverage should confirm:
 
 ## Manual ChatGPT proof
 
-Record a real test only when it has actually occurred:
+Native read-only preflight evidence recorded before the full filmed mutation:
 
-- Date: `[NOT RUN OR DATE]`
-- App version and workspace type: `[NOT CONFIRMED]`
-- Model: `[NOT CONFIRMED]`
-- Live URL: `[LIVE_URL — not confirmed]`
+- Date: `2026-08-30`
+- Environment: ChatGPT Codex in-app browser
+- Model: current Codex session; the filmed run should record its exact selected model
+- Live URL: `https://patchwork-webmcp.vercel.app/?demo=landing`
 - Prompt: canonical Roamly prompt from `docs/DEMO_RUNBOOK.md`
-- Discovered tools: `[NOT CONFIRMED]`
-- Result: `[NOT RUN / PASS / FAIL with factual notes]`
+- Discovered tools: `10`, registered from the top-level page
+- Result: `PARTIAL PASS` — native discovery and read-only context/preview calls succeeded; the full Roamly write/checkpoint/repair sequence remains not run until rehearsal or recording
 
 An adapter-based test is valuable automated evidence, but it must always be labeled as adapter-based and never presented as a real ChatGPT Site Tools session.
 
