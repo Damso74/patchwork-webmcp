@@ -9,7 +9,7 @@ This file is reduced as automation completes. It never treats legal acceptance o
 3. Upload `docs/assets/video/patchwork-video-thumbnail.png` as the thumbnail and `docs/assets/video/patchwork-demo.en.srt` as English captions.
 4. Verify the public link signed out, then paste it into README, `docs/DEVPOST_SUBMISSION.md`, and the Devpost draft.
 
-The encode is already measured at **1:53.320**, 1920×1080, H.264/AAC, with no copyrighted music. A native ChatGPT screen take remains optional; never describe the automated take as a ChatGPT conversation.
+The encode is already measured at **1:50.160**, 1920×1080, H.264/AAC, with no copyrighted music. Its narration now describes the automated walkthrough explicitly and uses a conditional statement for ChatGPT's built-in browser. A native ChatGPT screen take remains optional; never describe the automated take as a ChatGPT conversation.
 
 ## 2. Confirm eligibility and submit Devpost — about 4 minutes
 

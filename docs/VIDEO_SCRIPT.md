@@ -2,7 +2,7 @@
 
 ## Recording status
 
-- Produced walkthrough duration: **1:53.320**.
+- Produced walkthrough duration: **1:50.160**.
 - Hard stop: **1:58**. The official limit remains strictly under 3:00.
 - Public YouTube URL: `[VIDEO_URL — not uploaded]`
 - Live app: `https://patchwork-webmcp.vercel.app/`
@@ -17,9 +17,9 @@ The produced walkthrough is explicitly labeled **Automated WebMCP walkthrough �
 
 **Patchwork — Build with Codex, directly inside the page | WebMCP Challenge**
 
-## 1:53 shot plan and word-for-word narration
+## 1:50 shot plan and word-for-word narration
 
-### 0:00–0:18 — The reversal
+### 0:00–0:21 — The reversal
 
 **Picture:** Patchwork open on the clean Relay starter. Files, editor, and preview are visible immediately.
 
@@ -29,7 +29,7 @@ The produced walkthrough is explicitly labeled **Automated WebMCP walkthrough �
 
 > Most AI coding tools pull the project into the agent. Patchwork flips that model: it lets the Codex session you already have work directly inside the web application, with no embedded chatbot, API key, extension, or separate MCP server.
 
-### 0:18–0:32 — One shared workspace
+### 0:21–0:38 — One shared workspace
 
 **Picture:** Brief pan across Files, Code, Preview, Diagnostics, and Activity. Do not click Reset during the take.
 
@@ -39,7 +39,7 @@ The produced walkthrough is explicitly labeled **Automated WebMCP walkthrough �
 
 > The human keeps a real local-first workspace: virtual files, a text editor, live preview, checkpoints, and ZIP export. Everything persists in this browser, and the interface still works when Site Tools are unavailable.
 
-### 0:32–0:50 — Site Tools contract
+### 0:38–0:55 — Site Tools contract
 
 **Picture:** Show the ten registered tools, then the canonical prompt. In the automated take, the overlay names the adapter explicitly.
 
@@ -51,9 +51,9 @@ The produced walkthrough is explicitly labeled **Automated WebMCP walkthrough �
 
 **Narration:**
 
-> In ChatGPT's built-in browser, Patchwork registers ten WebMCP tools from the top-level document. Codex reads the workspace context and only the explicit files it needs. These read operations do not change the revision.
+> When opened in ChatGPT's built-in browser, Patchwork registers ten WebMCP tools from the top-level document. This labeled walkthrough invokes those same registered handlers to read only the explicit files needed. Reads do not change the revision.
 
-### 0:50–1:20 — Atomic Roamly transformation
+### 0:55–1:22 — Atomic Roamly transformation
 
 **Picture:** Let the real tool calls run. Hold on the checkpoint, activity row, revision change, editor update, and finished Roamly preview.
 
@@ -61,9 +61,9 @@ The produced walkthrough is explicitly labeled **Automated WebMCP walkthrough �
 
 **Narration:**
 
-> For the transformation, Codex submits one bounded multi-file write with the revision it observed. Patchwork validates every path and size before changing anything, creates a pre-edit checkpoint, commits the batch atomically, and increments the revision once. The editor and preview update from that same authoritative workspace. If any item were invalid, the entire batch would be rejected without a partial write.
+> For the transformation, one bounded multi-file write includes the observed revision. Patchwork validates every path and size before changing anything, creates a pre-edit checkpoint, commits the batch atomically, and increments the revision once. The editor and preview update from that same authoritative workspace. If any item were invalid, the entire batch would be rejected without a partial write.
 
-### 1:20–1:41 — Honest diagnostics and recovery
+### 1:22–1:36 — Honest diagnostics and recovery
 
 **Picture:** Show `Preview ready`, `No issues`, and the checkpoint popover. Do not inject a fake error.
 
@@ -71,9 +71,9 @@ The produced walkthrough is explicitly labeled **Automated WebMCP walkthrough �
 
 **Narration:**
 
-> Codex then inspects the compiler and runtime signals available from the preview. This run reports no blocking error, so Patchwork makes no invented visual claim. Every mutation remains recoverable through an explicit checkpoint, and project data never goes to a Patchwork backend.
+> The walkthrough then inspects the compiler and runtime signals available from the preview. This run reports no blocking error, so Patchwork makes no invented visual claim. Every mutation remains recoverable through an explicit checkpoint, and project data never goes to a Patchwork backend.
 
-### 1:41–1:53 — Close
+### 1:36–1:50 — Close
 
 **Picture:** Finished Roamly preview beside the changed files, then a clean end card.
 
@@ -130,7 +130,7 @@ If the real run differs, narrate only what actually happened.
 - [ ] Prompt is already in the clipboard.
 - [ ] Canvas is 1080p minimum and editor text is legible.
 - [ ] Microphone audio is clear; no copyrighted music.
-- [x] Final runtime is between 1:40 and 1:58: **1:53.320 measured with ffprobe**.
+- [x] Final runtime is between 1:40 and 1:58: **1:50.160 measured with ffprobe**.
 - [ ] Captions match the actual take.
 - [ ] YouTube visibility is Public.
 - [ ] Public video link works signed out.

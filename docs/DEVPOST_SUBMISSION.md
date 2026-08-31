@@ -115,7 +115,7 @@ Other deterministic routes: `?demo=dashboard` and `?demo=travel`.
 
 `[VIDEO_URL — not uploaded]`
 
-The finished local encode is 1:53.320 at 1920×1080 with clear ElevenLabs narration and no copyrighted music. It is labeled as an automated WebMCP walkthrough using the same production-registered handlers; it is not presented as a ChatGPT conversation. Required state before submission: complete human sound/image review and public YouTube visibility.
+The finished local encode is 1:50.160 at 1920×1080 with ElevenLabs narration and no copyrighted music. It is labeled as an automated WebMCP walkthrough using the same production-registered handlers; it is not presented as a ChatGPT conversation. Required state before submission: complete human sound/image review and public YouTube visibility.
 
 ## Testing instructions
 
@@ -151,7 +151,7 @@ Patchwork is an independent project and is not affiliated with or endorsed by Op
 - [x] Real ChatGPT testing is described accurately and not replaced by adapter evidence.
 - [x] Live URL works in a clean, signed-out context.
 - [x] Public repository exposes source, instructions, and detectable MIT license.
-- [x] Video runtime is strictly below three minutes: 1:53.320 measured.
+- [x] Video runtime is strictly below three minutes: 1:50.160 measured.
 - [ ] Video URL is public and verified signed out.
 - [ ] Placeholders are removed.
 - [ ] Submitted artifacts are frozen after the deadline.

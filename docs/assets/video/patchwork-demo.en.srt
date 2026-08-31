@@ -1,59 +1,59 @@
 1
-00:00:00,000 --> 00:00:04,800
+00:00:00,000 --> 00:00:04,365
 Most AI coding tools pull the project into the agent.
 
 2
-00:00:04,800 --> 00:00:17,877
+00:00:04,365 --> 00:00:20,814
 Patchwork flips that model: it lets the Codex session you already have work directly inside the web application, with no embedded chatbot, API key, extension, or separate MCP server.
 
 3
-00:00:17,877 --> 00:00:25,600
+00:00:20,814 --> 00:00:31,835
 The human keeps a real local-first workspace: virtual files, a text editor, live preview, checkpoints, and ZIP export.
 
 4
-00:00:25,600 --> 00:00:32,450
+00:00:31,835 --> 00:00:37,977
 Everything persists in this browser, and the interface still works when Site Tools are unavailable.
 
 5
-00:00:32,450 --> 00:00:40,863
-In ChatGPT's built-in browser, Patchwork registers ten WebMCP tools from the top-level document.
+00:00:37,977 --> 00:00:46,407
+When opened in ChatGPT's built-in browser, Patchwork registers ten WebMCP tools from the top-level document.
 
 6
-00:00:40,863 --> 00:00:49,895
-Codex reads the workspace context and only the explicit files it needs. These read operations do not change the revision.
+00:00:46,407 --> 00:00:54,749
+This labeled walkthrough invokes those same registered handlers to read only the explicit files needed. Reads do not change the revision.
 
 7
-00:00:49,895 --> 00:00:57,293
-For the transformation, Codex submits one bounded multi-file write with the revision it observed.
+00:00:54,749 --> 00:01:00,671
+For the transformation, one bounded multi-file write includes the observed revision.
 
 8
-00:00:57,293 --> 00:01:04,043
-Patchwork validates every path and size before changing anything, creates a pre-edit checkpoint,
+00:01:00,671 --> 00:01:09,733
+Patchwork validates every path and size before changing anything, creates a pre-edit checkpoint, commits the batch atomically, and increments the revision once.
 
 9
-00:01:04,043 --> 00:01:13,763
-commits the batch atomically, and increments the revision once. The editor and preview update from that same authoritative workspace.
+00:01:09,733 --> 00:01:16,338
+The editor and preview update from that same authoritative workspace.
 
 10
-00:01:13,763 --> 00:01:19,540
+00:01:16,338 --> 00:01:22,241
 If any item were invalid, the entire batch would be rejected without a partial write.
 
 11
-00:01:19,540 --> 00:01:27,573
-Codex then inspects the compiler and runtime signals available from the preview.
+00:01:22,241 --> 00:01:27,628
+The walkthrough then inspects the compiler and runtime signals available from the preview.
 
 12
-00:01:27,573 --> 00:01:34,900
+00:01:27,628 --> 00:01:31,979
 This run reports no blocking error, so Patchwork makes no invented visual claim.
 
 13
-00:01:34,900 --> 00:01:40,808
+00:01:31,979 --> 00:01:35,764
 Every mutation remains recoverable through an explicit checkpoint, and project data never goes to a Patchwork backend.
 
 14
-00:01:40,808 --> 00:01:48,348
+00:01:35,764 --> 00:01:45,228
 Patchwork makes WebMCP the structured collaboration layer between a real product interface and the agent the user already has.
 
 15
-00:01:48,348 --> 00:01:53,293
+00:01:45,228 --> 00:01:50,158
 Try the live demo and inspect the complete open-source implementation.

@@ -4,9 +4,9 @@
 
 - File: `patchwork-narration-elevenlabs.mp3`
 - Generated: 2026-08-30 with the account-owned **Damien Voice** in ElevenLabs Multilingual v2
-- Measured duration: 113.293 seconds
+- Measured duration: 110.158 seconds
 - Audio: 44.1 kHz mono, 128 kbit/s MP3
-- SHA-256: `474E84429F19D3DE056A8A8C362E4E17B12BB29E4A026ACB4C36404F2C03D1FE`
+- SHA-256: `0A8D85DB782F6F44F52DBD7717C846B19B4240168DB6F15E8A6DD5B77C540E14`
 - Text: the six narration paragraphs in `docs/VIDEO_SCRIPT.md`
 - No voice was created, replaced, renamed, or deleted for this recording.
 

@@ -29,7 +29,7 @@ This document is updated from actual command output. `Passed` is never used for 
 | Native production mutation and stability      | Passed  | Two-file atomic write, visible preview update, one revision, stable after 5 s |
 | Native clean-origin canonical run             | Passed  | Two fresh deployment origins completed revision 0 → 1 with three files        |
 | Labeled automated walkthrough                 | Passed  | Same registered handlers; clean profile; proof receipt; 0 preview diagnostics |
-| Final 1080p video encode                      | Passed  | H.264/AAC, 1920×1080, 1:53.320, 11.6 MB, SHA-256 recorded                     |
+| Final 1080p video encode                      | Passed  | H.264/AAC, 1920×1080, 1:50.160, 11.4 MB, SHA-256 recorded                     |
 | Public video upload                           | Not run | Requires final human sound/image review and action-time publication approval  |
 
 ## Security review
@@ -46,7 +46,7 @@ Production release 1.0.2 was then verified in the Codex in-app browser on 2026-0
 
 Two subsequent clean-origin native runs completed the canonical Roamly transformation at revision 0 → 1. Each run created the requested manual checkpoint, changed `src/App.tsx`, `src/content.ts`, and `src/styles.css` in one atomic write, rendered the new preview, and returned `ready` with no errors or warnings. The revision remained stable after completion.
 
-The final automated walkthrough was then produced from a fresh Playwright profile against the public production page. The adapter was injected before load and captured the exact ten definitions registered by the application; it did not provide a second handler implementation. The machine-readable receipt records revision 0 reads, a manual checkpoint, one automatic checkpoint, a three-file atomic write at revision 1, `inspect_preview` at rendered revision 1, and zero preview errors or warnings. The overlay identifies the run as automated. A single external resource timeout appeared in the capture console while the Sandpack preview remained ready; it is retained as non-blocking evidence rather than hidden. The final encode is 113.320 seconds at 1920×1080 with H.264 video and AAC narration.
+The final automated walkthrough was then produced from a fresh Playwright profile against the public production page. The adapter was injected before load and captured the exact ten definitions registered by the application; it did not provide a second handler implementation. The machine-readable receipt records revision 0 reads, a manual checkpoint, one automatic checkpoint, a three-file atomic write at revision 1, `inspect_preview` at rendered revision 1, and zero preview errors or warnings. The overlay identifies the run as automated. A single external resource timeout appeared in the capture console while the Sandpack preview remained ready; it is retained as non-blocking evidence rather than hidden. The final truth-corrected encode is 110.160 seconds at 1920×1080 with H.264 video and AAC narration. It says “When opened in ChatGPT's built-in browser” and explicitly identifies the labeled walkthrough as the caller of the production-registered handlers.
 
 ## Required manual ChatGPT run
 
