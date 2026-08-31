@@ -5,7 +5,7 @@ import {
   success,
   type Result,
 } from "../../domain/workspace/errors";
-import { WORKSPACE_LIMITS } from "../../domain/workspace/limits";
+import { WORKSPACE_LIMITS, utf8Size } from "../../domain/workspace/limits";
 import {
   createWorkspaceState,
   planWorkspaceMutation,
@@ -43,6 +43,11 @@ export interface WorkspaceFacadeOptions {
   initialWorkspace: WorkspaceState;
   starterSnapshots?: Record<string, WorkspaceSnapshot>;
   databaseName?: string;
+  /**
+   * Replaces only this project's records when the facade opens. Intended for
+   * an isolated demo database, never for the normal persistent workspace.
+   */
+  resetStoredStateOnInitialize?: boolean;
   now?: () => string;
   newId?: () => string;
 }
@@ -154,6 +159,109 @@ const decodePersistedWorkspace = (
   });
 };
 
+const invalidCheckpointFailure = (): Result<never> =>
+  failure({
+    code: "PERSISTENCE_FAILED",
+    message: "The stored checkpoint is invalid and was not restored.",
+    retryable: false,
+    suggestion:
+      "Keep working from the current workspace or choose another checkpoint.",
+  });
+
+const decodePersistedCheckpoint = (
+  candidate: unknown,
+  expected: WorkspaceState,
+  checkpointId: string,
+): Result<Checkpoint> => {
+  if (!candidate || typeof candidate !== "object" || Array.isArray(candidate))
+    return invalidCheckpointFailure();
+
+  const record = candidate as Record<string, unknown>;
+  const snapshot = record.snapshot;
+  if (
+    record.id !== checkpointId ||
+    record.projectId !== expected.projectId ||
+    typeof record.kind !== "string" ||
+    !["automatic", "manual", "restore-safety"].includes(record.kind) ||
+    typeof record.label !== "string" ||
+    record.label.length === 0 ||
+    record.label.length > 80 ||
+    !Number.isSafeInteger(record.sourceRevision) ||
+    Number(record.sourceRevision) < 0 ||
+    typeof record.createdAt !== "string" ||
+    Number.isNaN(Date.parse(record.createdAt)) ||
+    !snapshot ||
+    typeof snapshot !== "object" ||
+    Array.isArray(snapshot)
+  ) {
+    return invalidCheckpointFailure();
+  }
+
+  const rawSnapshot = snapshot as Record<string, unknown>;
+  if (
+    rawSnapshot.starterId !== expected.starterId ||
+    (rawSnapshot.activePath !== null &&
+      typeof rawSnapshot.activePath !== "string") ||
+    !Array.isArray(rawSnapshot.files) ||
+    rawSnapshot.files.length > WORKSPACE_LIMITS.maxFiles
+  ) {
+    return invalidCheckpointFailure();
+  }
+
+  const seen = new Set<string>();
+  const files: WorkspaceSnapshot["files"] = [];
+  let totalBytes = 0;
+  for (const candidateFile of rawSnapshot.files) {
+    if (
+      !candidateFile ||
+      typeof candidateFile !== "object" ||
+      Array.isArray(candidateFile)
+    ) {
+      return invalidCheckpointFailure();
+    }
+    const file = candidateFile as Record<string, unknown>;
+    if (typeof file.path !== "string" || typeof file.content !== "string")
+      return invalidCheckpointFailure();
+
+    const parsed = parseProjectPath(file.path);
+    if (!parsed.ok || seen.has(parsed.value)) return invalidCheckpointFailure();
+    seen.add(parsed.value);
+
+    const sizeBytes = utf8Size(file.content);
+    if (sizeBytes > WORKSPACE_LIMITS.maxFileBytes)
+      return invalidCheckpointFailure();
+    totalBytes += sizeBytes;
+    if (totalBytes > WORKSPACE_LIMITS.maxWorkspaceBytes)
+      return invalidCheckpointFailure();
+
+    files.push({ path: parsed.value, content: file.content });
+  }
+
+  let activePath: WorkspaceSnapshot["activePath"] = null;
+  if (typeof rawSnapshot.activePath === "string") {
+    const parsed = parseProjectPath(rawSnapshot.activePath);
+    if (!parsed.ok || !seen.has(parsed.value))
+      return invalidCheckpointFailure();
+    activePath = parsed.value;
+  }
+
+  return success({
+    id: record.id as Checkpoint["id"],
+    projectId: record.projectId,
+    kind: record.kind as Checkpoint["kind"],
+    label: record.label,
+    sourceRevision: Number(
+      record.sourceRevision,
+    ) as Checkpoint["sourceRevision"],
+    snapshot: {
+      starterId: expected.starterId,
+      activePath,
+      files,
+    },
+    createdAt: record.createdAt,
+  });
+};
+
 export const createWorkspaceFacade = (
   options: WorkspaceFacadeOptions,
 ): WorkspaceFacade => {
@@ -185,14 +293,35 @@ export const createWorkspaceFacade = (
 
   const initializing = (async () => {
     database = await openPatchworkDatabase(databaseName);
-    const transaction = database.transaction("workspaces", "readwrite");
-    const stored = await transaction.store.get(state.projectId);
-    if (stored) {
-      const decoded = decodePersistedWorkspace(stored, state);
-      if (decoded.ok) state = decoded.value;
-      else await transaction.store.put(state);
-    } else await transaction.store.put(state);
-    await transaction.done;
+    if (options.resetStoredStateOnInitialize) {
+      const transaction = database.transaction(
+        ["workspaces", "checkpoints", "activities"],
+        "readwrite",
+      );
+      await transaction.objectStore("workspaces").put(state);
+
+      const checkpointStore = transaction.objectStore("checkpoints");
+      const checkpointKeys = await checkpointStore
+        .index("by-project")
+        .getAllKeys(state.projectId);
+      for (const key of checkpointKeys) await checkpointStore.delete(key);
+
+      const activityStore = transaction.objectStore("activities");
+      const activityKeys = await activityStore
+        .index("by-project")
+        .getAllKeys(state.projectId);
+      for (const key of activityKeys) await activityStore.delete(key);
+      await transaction.done;
+    } else {
+      const transaction = database.transaction("workspaces", "readwrite");
+      const stored = await transaction.store.get(state.projectId);
+      if (stored) {
+        const decoded = decodePersistedWorkspace(stored, state);
+        if (decoded.ok) state = decoded.value;
+        else await transaction.store.put(state);
+      } else await transaction.store.put(state);
+      await transaction.done;
+    }
 
     if (typeof BroadcastChannel !== "undefined") {
       channel = new BroadcastChannel(`${databaseName}:workspace`);
@@ -417,17 +546,23 @@ export const createWorkspaceFacade = (
     async restoreCheckpoint(input) {
       try {
         const db = await ensureDatabase();
-        const checkpoint = await db.get("checkpoints", input.checkpointId);
-        if (!checkpoint || checkpoint.projectId !== state.projectId) {
+        const stored = await db.get("checkpoints", input.checkpointId);
+        if (!stored) {
           return failure({
             code: "CHECKPOINT_NOT_FOUND",
             message: "The requested checkpoint does not exist.",
             retryable: false,
           });
         }
+        const checkpoint = decodePersistedCheckpoint(
+          stored,
+          state,
+          input.checkpointId,
+        );
+        if (!checkpoint.ok) return checkpoint;
         return commitMutation({
           kind: "restore",
-          snapshot: checkpoint.snapshot,
+          snapshot: checkpoint.value.snapshot,
           ...input,
         });
       } catch {

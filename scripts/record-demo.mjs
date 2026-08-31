@@ -2,9 +2,12 @@ import { chromium } from "@playwright/test";
 import { mkdir, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
-const baseUrl =
-  process.env.PATCHWORK_RECORD_URL ??
-  "https://patchwork-webmcp.vercel.app/?demo=landing";
+const recordTarget = new URL(
+  process.env.PATCHWORK_RECORD_URL ?? "https://patchwork-webmcp.vercel.app/",
+);
+recordTarget.searchParams.set("demo", "landing");
+recordTarget.searchParams.set("fresh", "1");
+const baseUrl = recordTarget.toString();
 const outputDir = resolve("artifacts/video");
 const rawVideoPath = resolve(outputDir, "patchwork-walkthrough-raw.webm");
 const proofPath = resolve(outputDir, "patchwork-walkthrough-proof.json");
@@ -98,8 +101,18 @@ await context.addInitScript(() => {
 const page = await context.newPage();
 const video = page.video();
 const consoleErrors = [];
+const suppressedTelemetryRequests = [];
+await page.route("https://col.csbops.io/**", async (route) => {
+  suppressedTelemetryRequests.push(route.request().url());
+  await route.fulfill({ status: 204, body: "" });
+});
 page.on("console", (message) => {
-  if (message.type() === "error") consoleErrors.push(message.text());
+  if (message.type() === "error") {
+    const location = message.location();
+    consoleErrors.push(
+      [message.text(), location.url].filter(Boolean).join(" · "),
+    );
+  }
 });
 page.on("pageerror", (error) => consoleErrors.push(error.message));
 
@@ -158,12 +171,23 @@ const hideCard = () =>
   );
 
 await page.goto(baseUrl, { waitUntil: "domcontentloaded" });
-await page.waitForFunction(
-  () => Object.keys(window.__patchworkTools ?? {}).length === 10,
-);
-await page
-  .getByText("Preview ready", { exact: true })
-  .waitFor({ timeout: 30_000 });
+await Promise.all([
+  page.waitForFunction(
+    () => Object.keys(window.__patchworkTools ?? {}).length === 10,
+  ),
+  page
+    .locator(".tools-status.ready")
+    .filter({ hasText: "10 tools ready" })
+    .waitFor({ timeout: 30_000 }),
+  page.getByText("Preview ready", { exact: true }).waitFor({ timeout: 30_000 }),
+  page.locator(".preview-frame.is-rendered").waitFor({ timeout: 30_000 }),
+  page
+    .frameLocator(".preview-frame iframe")
+    .getByRole("heading", {
+      name: "From first thought to clear direction.",
+    })
+    .waitFor({ timeout: 30_000 }),
+]);
 await page.locator(".revision-pill").waitFor({ state: "attached" });
 
 const startedAt = Date.now();
@@ -178,38 +202,43 @@ await showCard(
   "No embedded chatbot · No API key · No separate MCP server\nSame registered handlers as the production integration",
 );
 
-await waitUntil(17.9);
+await waitUntil(13.2);
 await showCard(
   "One shared workspace",
   "Files, code and preview stay together.",
   "Local-first · React + TypeScript · IndexedDB · Checkpoints · ZIP export",
 );
 await page.locator(".file-row").filter({ hasText: "content.ts" }).click();
-await waitUntil(22);
+await waitUntil(17.2);
 await page.locator(".file-row").filter({ hasText: "styles.css" }).click();
-await waitUntil(26);
+await waitUntil(21.2);
 await page.locator(".file-row").filter({ hasText: "App.tsx" }).click();
 
-await waitUntil(32.45);
+await waitUntil(24.2);
 await showCard(
   "10 top-level WebMCP tools",
   "Read precisely. Mutate atomically.",
   "get_workspace_context · list_files · read_files · write_files · move_file\ndelete_file · inspect_preview · create_checkpoint · restore_checkpoint · prepare_project_export",
 );
 const initialContext = await invoke("get_workspace_context");
+if (initialContext.revision !== 0) {
+  throw new Error(
+    `Fresh demo must start at revision 0, observed ${initialContext.revision}.`,
+  );
+}
 const fileList = await invoke("list_files");
 const readResult = await invoke("read_files", {
   paths: ["src/App.tsx", "src/content.ts", "src/styles.css"],
 });
 
-await waitUntil(40.8);
+await waitUntil(32.4);
 await showCard(
   "Canonical mission",
   "“Inspect the current project…”",
   canonicalPrompt,
 );
 
-await waitUntil(49.9);
+await waitUntil(39.7);
 await showCard(
   "Bounded multi-file mutation",
   "Validate all → checkpoint → one revision → persist",
@@ -219,7 +248,9 @@ const manualCheckpoint = await invoke("create_checkpoint", {
   label: "Before Roamly demo",
 });
 
-await waitUntil(55);
+await waitUntil(45.2);
+await hideCard();
+await waitUntil(46);
 const writeResult = await invoke("write_files", {
   writes: Object.entries(roamlyFiles).map(([path, content]) => ({
     path,
@@ -227,6 +258,23 @@ const writeResult = await invoke("write_files", {
   })),
   expectedRevision: initialContext.revision,
 });
+const mutationReceipt = page.getByTestId("webmcp-receipt");
+await mutationReceipt.waitFor({ state: "visible", timeout: 5_000 });
+const mutationReceiptText = (await mutationReceipt.innerText()).replace(
+  /\s+/g,
+  " ",
+);
+const normalizedMutationReceiptText = mutationReceiptText.toLowerCase();
+for (const expected of [
+  "webmcp · write_files",
+  "3 files updated atomically",
+  "revision 0 → 1",
+  "checkpoint saved",
+]) {
+  if (!normalizedMutationReceiptText.includes(expected)) {
+    throw new Error(`Mutation receipt is missing: ${expected}`);
+  }
+}
 await page
   .getByText("Preview ready", { exact: true })
   .waitFor({ timeout: 30_000 });
@@ -234,8 +282,12 @@ await page.waitForFunction(() =>
   document.querySelector(".revision-pill")?.textContent?.includes("Revision 1"),
 );
 await page.locator(".cm-content").filter({ hasText: "Roamly" }).waitFor();
+await page
+  .frameLocator(".preview-frame iframe")
+  .getByRole("heading", { name: /Go farther.*Feel closer/i })
+  .waitFor({ timeout: 30_000 });
 
-await waitUntil(67);
+await waitUntil(55.5);
 await showCard(
   "Atomic write complete",
   "Revision 0 → 1",
@@ -243,10 +295,27 @@ await showCard(
   { accent: true },
 );
 
-await waitUntil(74);
+await waitUntil(61.5);
 await hideCard();
+const focusPreviewButton = page.getByRole("button", {
+  name: "Focus preview",
+  exact: true,
+});
+await focusPreviewButton.click();
+await page.locator(".workspace-grid.preview-focused").waitFor({
+  state: "visible",
+  timeout: 5_000,
+});
+const previewFocusActivated = await page
+  .getByRole("button", { name: "Exit preview focus", exact: true })
+  .isVisible();
+if (!previewFocusActivated) {
+  throw new Error(
+    "Focus preview did not activate for the transformed project.",
+  );
+}
 
-await waitUntil(79.54);
+await waitUntil(66.8);
 const previewResult = await invoke("inspect_preview");
 await showCard(
   "Honest diagnostics",
@@ -254,18 +323,29 @@ await showCard(
   `${previewResult.data.errors.length} errors · ${previewResult.data.warnings.length} warnings\nCompiler and runtime signals only — no invented visual claim`,
 );
 
-await waitUntil(91);
+await waitUntil(74.5);
 const checkpointButton = page
   .getByRole("button", { name: /checkpoint/i })
   .first();
 if (await checkpointButton.isVisible().catch(() => false))
   await checkpointButton.click();
 
-await waitUntil(98.4);
+await waitUntil(81.2);
 await hideCard();
-await page.keyboard.press("Escape").catch(() => {});
+if (await checkpointButton.isVisible().catch(() => false))
+  await checkpointButton.click();
+const exitPreviewFocusButton = page.getByRole("button", {
+  name: "Exit preview focus",
+  exact: true,
+});
+if (await exitPreviewFocusButton.isVisible().catch(() => false))
+  await exitPreviewFocusButton.click();
+await page.locator(".workspace-grid:not(.preview-focused)").waitFor({
+  state: "visible",
+  timeout: 5_000,
+});
 
-await waitUntil(100.8);
+await waitUntil(84.8);
 await showCard(
   "Patchwork",
   "Build with Codex, directly inside the page.",
@@ -273,9 +353,14 @@ await showCard(
   { full: true },
 );
 
-await waitUntil(113.5);
+await waitUntil(95.2);
 
 const finalContext = await invoke("get_workspace_context");
+if (consoleErrors.length > 0) {
+  throw new Error(
+    `Walkthrough emitted console errors:\n${consoleErrors.join("\n")}`,
+  );
+}
 const proof = {
   generatedAt: new Date().toISOString(),
   label:
@@ -295,8 +380,11 @@ const proof = {
   },
   manualCheckpoint,
   writeResult,
+  mutationReceiptText,
+  previewFocusActivated,
   previewResult,
   finalContext,
+  suppressedTelemetryRequests,
   consoleErrors,
 };
 await writeFile(proofPath, `${JSON.stringify(proof, null, 2)}\n`, "utf8");

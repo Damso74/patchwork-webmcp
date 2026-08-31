@@ -4,6 +4,10 @@ import { plannerStarter } from "./planner";
 import type { StarterDefinition } from "./types";
 
 export type { StarterDefinition, StarterId } from "./types";
+export {
+  getWorkspaceProjectLabel,
+  workspaceMatchesStarter,
+} from "./workspaceIdentity";
 
 export const starters: StarterDefinition[] = [
   landingStarter,

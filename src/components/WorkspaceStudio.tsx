@@ -20,7 +20,8 @@ import {
   FilePlus2,
   Files,
   FolderOpen,
-  MoreHorizontal,
+  Maximize2,
+  Minimize2,
   PanelRight,
   Pencil,
   Plus,
@@ -31,7 +32,14 @@ import {
   WifiOff,
   X,
 } from "lucide-react";
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { setPreviewSnapshot } from "../services/preview/runtime";
 import type { RegistrationStatus } from "../webmcp";
 import type { StarterId } from "../starters";
@@ -154,16 +162,46 @@ function WorkspaceBridge({
 }
 
 function RuntimeStatus({
+  iframeReady,
   onDiagnostics,
+  renderToken,
   revision,
+  revisionReady,
 }: {
+  iframeReady: boolean;
   onDiagnostics: (message: string | null) => void;
+  renderToken: string;
   revision: number;
+  revisionReady: boolean;
 }) {
-  const { sandpack } = useSandpack();
+  const { listen, sandpack } = useSandpack();
+  const [compiledToken, setCompiledToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    let compileStarted =
+      sandpack.status !== "done" && sandpack.status !== "timeout";
+    const unsubscribe = listen((event) => {
+      if (
+        event.type === "start" ||
+        (event.type === "status" && event.status !== "done")
+      ) {
+        compileStarted = true;
+        return;
+      }
+      if (event.type !== "done") return;
+      if (compileStarted && !event.compilatonError) {
+        setCompiledToken(renderToken);
+      }
+      compileStarted = false;
+    });
+    return unsubscribe;
+  }, [listen, renderToken, sandpack.status]);
+
   const message = sandpack.error ? String(sandpack.error) : null;
   const problem = Boolean(message) || sandpack.status === "timeout";
-  const building = sandpack.status === "initial" || sandpack.status === "idle";
+  const compilationReady = compiledToken === renderToken;
+  const building =
+    !problem && (!revisionReady || !compilationReady || !iframeReady);
 
   useEffect(() => {
     onDiagnostics(message);
@@ -178,8 +216,8 @@ function RuntimeStatus({
         : building
           ? "The preview is compiling the current workspace."
           : "The React preview compiled without a blocking error.",
-      renderedRevision: problem ? undefined : revision,
-      renderedAt: problem ? undefined : new Date().toISOString(),
+      renderedRevision: !problem && !building ? revision : undefined,
+      renderedAt: !problem && !building ? new Date().toISOString() : undefined,
     });
   }, [building, message, onDiagnostics, problem, revision]);
 
@@ -207,13 +245,29 @@ function RuntimeStatus({
 const PREVIEW_SANDBOX = "allow-scripts allow-same-origin";
 const SANDPACK_CUSTOM_SETUP = { entry: "/src/main.tsx" } as const;
 
-function SecureSandpackPreview() {
+function SecureSandpackPreview({ onRendered }: { onRendered: () => void }) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const observedIframeRef = useRef<HTMLIFrameElement | null>(null);
+  const [iframeLoaded, setIframeLoaded] = useState(false);
 
   useLayoutEffect(() => {
+    const markLoaded = () => {
+      const iframe = observedIframeRef.current;
+      const source = iframe?.getAttribute("src");
+      if (source && source !== "about:blank") {
+        setIframeLoaded(true);
+        onRendered();
+      }
+    };
     const harden = () => {
       const iframe = containerRef.current?.querySelector("iframe");
       if (!iframe) return;
+      if (observedIframeRef.current !== iframe) {
+        observedIframeRef.current?.removeEventListener("load", markLoaded);
+        observedIframeRef.current = iframe;
+        setIframeLoaded(false);
+        iframe.addEventListener("load", markLoaded);
+      }
       if (iframe.getAttribute("sandbox") !== PREVIEW_SANDBOX)
         iframe.setAttribute("sandbox", PREVIEW_SANDBOX);
       if (iframe.hasAttribute("allow")) iframe.removeAttribute("allow");
@@ -228,11 +282,18 @@ function SecureSandpackPreview() {
       });
     }
     harden();
-    return () => observer.disconnect();
-  }, []);
+    return () => {
+      observer.disconnect();
+      observedIframeRef.current?.removeEventListener("load", markLoaded);
+      observedIframeRef.current = null;
+    };
+  }, [onRendered]);
 
   return (
-    <div className="preview-frame" ref={containerRef}>
+    <div
+      className={`preview-frame ${iframeLoaded ? "is-rendered" : ""}`}
+      ref={containerRef}
+    >
       <SandpackPreview
         showNavigator={false}
         showOpenInCodeSandbox={false}
@@ -244,7 +305,13 @@ function SecureSandpackPreview() {
   );
 }
 
-function FileSidebar({ controller }: { controller: WorkspaceController }) {
+function FileSidebar({
+  controller,
+  highlightedPaths,
+}: {
+  controller: WorkspaceController;
+  highlightedPaths: string[];
+}) {
   const [showStarters, setShowStarters] = useState(true);
   const [newPath, setNewPath] = useState("");
   const [creating, setCreating] = useState(false);
@@ -350,7 +417,7 @@ function FileSidebar({ controller }: { controller: WorkspaceController }) {
             const folder = path.slice(1, path.lastIndexOf("/"));
             return (
               <div
-                className={`file-row ${controller.activeFile === path ? "active" : ""}`}
+                className={`file-row ${controller.activeFile === path ? "active" : ""} ${highlightedPaths.includes(path) ? "changed" : ""}`}
                 key={path}
               >
                 <button
@@ -492,8 +559,16 @@ function ActivityPanel({ controller }: { controller: WorkspaceController }) {
               )}
             </i>
             <span>
-              <strong>{item.action}</strong>
-              <small>{item.detail}</small>
+              <strong>
+                {item.origin === "webmcp"
+                  ? `WebMCP · ${item.tool}`
+                  : item.action}
+              </strong>
+              <small>
+                {item.origin === "webmcp" && item.paths.length > 0
+                  ? `${item.paths.length} file${item.paths.length === 1 ? "" : "s"} · Revision ${item.previousRevision} → ${item.revision}`
+                  : item.detail}
+              </small>
             </span>
             <time>
               {new Date(item.timestamp).toLocaleTimeString([], {
@@ -526,28 +601,91 @@ export function WorkspaceStudio({
   const [previewSize, setPreviewSize] = useState<"desktop" | "tablet">(
     "desktop",
   );
+  const [previewFocused, setPreviewFocused] = useState(false);
+  const [agentReceipt, setAgentReceipt] = useState<
+    WorkspaceController["activities"][number] | null
+  >(null);
+  const [highlightedPaths, setHighlightedPaths] = useState<string[]>([]);
+  const [renderedPreviewToken, setRenderedPreviewToken] = useState<
+    string | null
+  >(null);
   const humanEditRef = useRef(false);
+  const latestActivityIdRef = useRef<string | null>(null);
+  const receiptMountedAtRef = useRef(Number.POSITIVE_INFINITY);
+  const receiptTimerRef = useRef<number | undefined>(undefined);
 
   const siteToolsReady = siteToolsStatus === "ready";
 
   const visibleFiles = Object.keys(controller.files);
   const latestActivity = controller.activities[0];
-  const sandpackSeedFiles = useMemo(
+  const previewRefreshActivity = controller.activities.find(
+    (activity) =>
+      activity.type !== "checkpoint_created" &&
+      (activity.origin !== "ui" || activity.type !== "files_written"),
+  );
+  const latestMutationActivity = controller.activities.find(
+    (activity) => activity.type !== "checkpoint_created",
+  );
+  const previewRevisionReady =
+    controller.revision === 0 ||
+    latestMutationActivity?.revision === controller.revision;
+  const previewRenderToken = `${controller.starter.id}:${previewRefreshActivity?.id ?? "initial"}`;
+  const markPreviewRendered = useCallback(() => {
+    setRenderedPreviewToken(previewRenderToken);
+  }, [previewRenderToken]);
+  const sandpackWorkspaceFiles = useMemo(
     () =>
       Object.fromEntries(
-        Object.entries(controller.starter.files).map(([path, code]) => [
+        Object.entries(controller.files).map(([path, code]) => [
           path,
           { code },
         ]),
       ),
-    [controller.starter.files],
+    [controller.files],
   );
+
+  useEffect(() => {
+    receiptMountedAtRef.current = Date.now();
+  }, []);
+
+  useEffect(() => {
+    if (!latestActivity || latestActivity.id === latestActivityIdRef.current)
+      return;
+    latestActivityIdRef.current = latestActivity.id;
+    const activityTime = Date.parse(latestActivity.timestamp);
+    if (
+      latestActivity.origin !== "webmcp" ||
+      latestActivity.type === "checkpoint_created" ||
+      !Number.isFinite(activityTime) ||
+      activityTime < receiptMountedAtRef.current
+    )
+      return;
+    window.clearTimeout(receiptTimerRef.current);
+    setAgentReceipt(latestActivity);
+    setHighlightedPaths(latestActivity.paths.map((path) => `/${path}`));
+    receiptTimerRef.current = window.setTimeout(() => {
+      receiptTimerRef.current = undefined;
+      setAgentReceipt(null);
+      setHighlightedPaths([]);
+    }, 6500);
+  }, [latestActivity]);
+
+  useEffect(() => () => window.clearTimeout(receiptTimerRef.current), []);
+
+  useEffect(() => {
+    if (!previewFocused) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setPreviewFocused(false);
+    };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [previewFocused]);
 
   return (
     <SandpackProvider
-      key={controller.starter.id}
+      key={previewRenderToken}
       template="react-ts"
-      files={sandpackSeedFiles}
+      files={sandpackWorkspaceFiles}
       customSetup={SANDPACK_CUSTOM_SETUP}
       options={{
         activeFile: controller.activeFile,
@@ -568,13 +706,13 @@ export function WorkspaceStudio({
         <header className="topbar">
           <div className="brand-lockup">
             <BrandMark />
-            <span>
+            <span className="brand-copy">
               <strong>Patchwork</strong>
-              <small>Browser workspace</small>
+              <small>Human + Codex workspace</small>
             </span>
           </div>
           <div className="project-title">
-            <span>{controller.starter.projectName}</span>
+            <span>{controller.projectName}</span>
             <small>{controller.activeFile}</small>
           </div>
           <div className="topbar-statuses">
@@ -588,15 +726,25 @@ export function WorkspaceStudio({
                     ? "Edit conflict — review latest"
                     : "Saved locally"}
             </span>
-            <span className={`tools-status ${siteToolsReady ? "ready" : ""}`}>
+            <span
+              className={`tools-status ${siteToolsReady ? "ready" : ""}`}
+              title={
+                siteToolsReady
+                  ? "Patchwork registered ten structured WebMCP tools for Codex."
+                  : "Open this site in ChatGPT to let Codex work with the project."
+              }
+            >
               {siteToolsReady ? <Sparkles size={13} /> : <WifiOff size={13} />}
-              {siteToolsReady
-                ? "Site tools ready"
-                : siteToolsStatus === "registering"
-                  ? "Registering site tools…"
-                  : siteToolsStatus === "failed"
-                    ? "Site tools registration failed"
-                    : "Site tools unavailable in this browser"}
+              <strong>WebMCP</strong>
+              <span>
+                {siteToolsReady
+                  ? "10 tools ready"
+                  : siteToolsStatus === "registering"
+                    ? "Connecting…"
+                    : siteToolsStatus === "failed"
+                      ? "Registration failed"
+                      : "Open in ChatGPT to connect Codex"}
+              </span>
             </span>
           </div>
           <div className="topbar-actions">
@@ -665,11 +813,51 @@ export function WorkspaceStudio({
           ))}
         </nav>
 
-        <main className="workspace-grid">
+        {agentReceipt && (
+          <aside
+            className="agent-receipt"
+            role="status"
+            data-testid="webmcp-receipt"
+          >
+            <span className="agent-receipt-icon">
+              <Sparkles size={16} />
+            </span>
+            <span>
+              <small>WebMCP · {agentReceipt.tool}</small>
+              <strong>
+                {agentReceipt.paths.length} file
+                {agentReceipt.paths.length === 1 ? "" : "s"} updated atomically
+              </strong>
+              <em>
+                Revision {agentReceipt.previousRevision} →{" "}
+                {agentReceipt.revision}
+                {agentReceipt.checkpointed ? " · Checkpoint saved" : ""}
+              </em>
+            </span>
+            <button
+              onClick={() => {
+                window.clearTimeout(receiptTimerRef.current);
+                receiptTimerRef.current = undefined;
+                setAgentReceipt(null);
+                setHighlightedPaths([]);
+              }}
+              aria-label="Dismiss WebMCP receipt"
+            >
+              <X size={14} />
+            </button>
+          </aside>
+        )}
+
+        <main
+          className={`workspace-grid ${previewFocused ? "preview-focused" : ""}`}
+        >
           <div
             className={`pane files-pane ${mobilePane === "files" ? "mobile-active" : ""}`}
           >
-            <FileSidebar controller={controller} />
+            <FileSidebar
+              controller={controller}
+              highlightedPaths={highlightedPaths}
+            />
           </div>
           <section
             className={`pane editor-pane ${mobilePane === "code" ? "mobile-active" : ""}`}
@@ -713,7 +901,7 @@ export function WorkspaceStudio({
               />
             </div>
             <footer className="editor-footer">
-              <span>Ln 1, Col 1</span>
+              <span>Revision {controller.revision}</span>
               <span>UTF-8</span>
               <span>Changes save locally</span>
             </footer>
@@ -728,8 +916,11 @@ export function WorkspaceStudio({
                 <PanelRight size={14} />
                 <span>Live preview</span>
                 <RuntimeStatus
+                  iframeReady={renderedPreviewToken === previewRenderToken}
                   onDiagnostics={setDiagnostic}
+                  renderToken={previewRenderToken}
                   revision={controller.revision}
+                  revisionReady={previewRevisionReady}
                 />
               </div>
               <div className="preview-actions">
@@ -748,16 +939,26 @@ export function WorkspaceStudio({
                   </button>
                 </div>
                 <button
-                  className="quiet-icon"
-                  title="More preview options"
-                  aria-label="More preview options"
+                  className={`quiet-icon focus-preview-button ${previewFocused ? "active" : ""}`}
+                  title={
+                    previewFocused ? "Exit preview focus" : "Focus preview"
+                  }
+                  aria-label={
+                    previewFocused ? "Exit preview focus" : "Focus preview"
+                  }
+                  aria-pressed={previewFocused}
+                  onClick={() => setPreviewFocused((focused) => !focused)}
                 >
-                  <MoreHorizontal size={15} />
+                  {previewFocused ? (
+                    <Minimize2 size={15} />
+                  ) : (
+                    <Maximize2 size={15} />
+                  )}
                 </button>
               </div>
             </header>
             <div className={`preview-stage ${previewSize}`}>
-              <SecureSandpackPreview />
+              <SecureSandpackPreview onRendered={markPreviewRendered} />
             </div>
             <section
               className={`diagnostics ${diagnostic ? "has-error" : ""}`}
@@ -800,13 +1001,22 @@ export function WorkspaceStudio({
             <span className="activity-label">
               <Activity size={14} />
               <strong>Recent activity</strong>
-              <i>{controller.activities.length}</i>
+              <i>Rev {controller.revision}</i>
             </span>
             {latestActivity && (
               <span className="latest-event">
                 <CircleCheck size={13} />
-                <strong>{latestActivity.action}</strong>
-                <small>{latestActivity.detail}</small>
+                <strong>
+                  {latestActivity.origin === "webmcp"
+                    ? `WebMCP · ${latestActivity.tool}`
+                    : latestActivity.action}
+                </strong>
+                <small>
+                  {latestActivity.origin === "webmcp" &&
+                  latestActivity.paths.length > 0
+                    ? `${latestActivity.paths.length} file${latestActivity.paths.length === 1 ? "" : "s"} · Revision ${latestActivity.previousRevision} → ${latestActivity.revision}${latestActivity.checkpointed ? " · checkpoint" : ""}`
+                    : latestActivity.detail}
+                </small>
               </span>
             )}
             <span className="activity-expand">

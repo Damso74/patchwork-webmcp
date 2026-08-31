@@ -4,12 +4,23 @@ import type {
   WorkspaceSnapshot,
   WorkspaceState,
 } from "../../domain/workspace/types";
+import { prepareProjectExport } from "../../services/export";
 import { createWorkspaceFacade } from "../../services/persistence/workspaceFacade";
-import { getStarter, starters } from "../../starters";
+import { getWorkspaceSessionConfig } from "../../services/persistence/workspaceSession";
+import { getStarter, getWorkspaceProjectLabel, starters } from "../../starters";
 import type { StarterId } from "../../starters";
+import { toActivityItem, type ActivityItem } from "./activityPresentation";
 
-const requestedDemo = new URLSearchParams(window.location.search).get("demo");
+export type { ActivityItem, ActivityToolName } from "./activityPresentation";
+
+const searchParams = new URLSearchParams(window.location.search);
+const requestedDemo = searchParams.get("demo");
 const initialStarter = getStarter(requestedDemo);
+const sessionConfig = getWorkspaceSessionConfig(
+  window.location.search,
+  initialStarter.id,
+  crypto.randomUUID(),
+);
 const domainStarterFiles = Object.fromEntries(
   Object.entries(initialStarter.files).map(([path, content]) => [
     path.replace(/^\/+/, ""),
@@ -39,17 +50,9 @@ const starterSnapshot: WorkspaceSnapshot = {
 export const workspaceFacade = createWorkspaceFacade({
   initialWorkspace: initialResult.value,
   starterSnapshots: { [initialStarter.id]: starterSnapshot },
-  databaseName: "patchwork-workspaces",
+  databaseName: sessionConfig.databaseName,
+  resetStoredStateOnInitialize: sessionConfig.resetStoredStateOnInitialize,
 });
-
-export interface ActivityItem {
-  id: string;
-  action: string;
-  detail: string;
-  revision: number;
-  timestamp: string;
-  tone?: "success" | "warning";
-}
 
 export interface CheckpointItem {
   id: string;
@@ -82,6 +85,7 @@ export function useWorkspaceController() {
   );
   const editConflict = useRef(false);
   const uiFlushInFlight = useRef(false);
+  const flushInFlight = useRef<Promise<void> | null>(null);
   const editTimer = useRef<number | undefined>(undefined);
 
   const refreshMetadata = useCallback(async () => {
@@ -90,22 +94,7 @@ export function useWorkspaceController() {
       workspaceFacade.listCheckpoints(),
     ]);
     if (activityResult.ok) {
-      setActivities(
-        activityResult.value.map((item) => ({
-          id: item.id,
-          action:
-            item.origin === "webmcp"
-              ? "Site tool activity"
-              : item.type.replaceAll("_", " "),
-          detail: item.summary,
-          revision: item.revision,
-          timestamp: item.createdAt,
-          tone:
-            item.type === "file_deleted"
-              ? ("warning" as const)
-              : ("success" as const),
-        })),
-      );
+      setActivities(activityResult.value.map(toActivityItem));
     }
     if (checkpointResult.ok) {
       setCheckpoints(
@@ -146,63 +135,103 @@ export function useWorkspaceController() {
     return unsubscribe;
   }, [refreshMetadata]);
 
-  const flushPendingEdit = useCallback(async () => {
-    const pending = pendingEdit.current;
-    if (!pending) return;
-    window.clearTimeout(editTimer.current);
-    const current = workspaceFacade.getState();
-    if (editConflict.current) {
-      pendingEdit.current = null;
-      editBaseRevision.current = null;
-      editConflict.current = false;
-      setWorkspace(current);
-      setSaveState("conflict");
-      return;
-    }
-    if (current.files[pending.path]?.content === pending.code) {
-      pendingEdit.current = null;
-      return;
-    }
-    setSaveState("saving");
-    uiFlushInFlight.current = true;
-    const result = await workspaceFacade.writeFiles({
-      writes: [{ path: pending.path, content: pending.code }],
-      expectedRevision: pending.expectedRevision,
-      origin: "ui",
-    });
-    uiFlushInFlight.current = false;
-    const newerPending = pendingEdit.current;
-    const samePendingContent =
-      newerPending?.path === pending.path && newerPending.code === pending.code;
-    if (result.ok) {
-      if (samePendingContent) {
-        pendingEdit.current = null;
-        editBaseRevision.current = null;
-        setWorkspace(workspaceFacade.getState());
-        setSaveState("saved");
-      } else if (newerPending) {
-        editBaseRevision.current = {
-          path: newerPending.path,
-          revision: result.value.revision,
-        };
-        pendingEdit.current = {
-          ...newerPending,
-          expectedRevision: result.value.revision,
-        };
-      }
-    } else if (samePendingContent) {
-      pendingEdit.current = null;
-      editBaseRevision.current = null;
-      setWorkspace(workspaceFacade.getState());
-      setSaveState(
-        result.error.code === "REVISION_CONFLICT"
-          ? "conflict"
-          : result.error.code === "PERSISTENCE_FAILED"
-            ? "memory"
-            : "saved",
-      );
-    }
-  }, []);
+  const flushPendingEdit = useCallback(
+    function drainPendingEdit(): Promise<void> {
+      if (flushInFlight.current) return flushInFlight.current;
+      if (!pendingEdit.current) return Promise.resolve();
+
+      uiFlushInFlight.current = true;
+      let operation: Promise<void>;
+      operation = Promise.resolve().then(async () => {
+        try {
+          while (pendingEdit.current) {
+            const pending = pendingEdit.current;
+            window.clearTimeout(editTimer.current);
+            editTimer.current = undefined;
+            const current = workspaceFacade.getState();
+            if (editConflict.current) {
+              pendingEdit.current = null;
+              editBaseRevision.current = null;
+              editConflict.current = false;
+              setWorkspace(current);
+              setSaveState("conflict");
+              return;
+            }
+            if (current.files[pending.path]?.content === pending.code) {
+              if (pendingEdit.current === pending) {
+                pendingEdit.current = null;
+                editBaseRevision.current = null;
+              }
+              continue;
+            }
+            setSaveState("saving");
+            const result = await workspaceFacade.writeFiles({
+              writes: [{ path: pending.path, content: pending.code }],
+              expectedRevision: pending.expectedRevision,
+              origin: "ui",
+            });
+            const newerPending = pendingEdit.current;
+            const samePendingContent =
+              newerPending?.path === pending.path &&
+              newerPending.code === pending.code;
+            if (result.ok) {
+              if (samePendingContent) {
+                pendingEdit.current = null;
+                editBaseRevision.current = null;
+                setWorkspace(workspaceFacade.getState());
+                setSaveState("saved");
+              } else if (newerPending) {
+                editBaseRevision.current = {
+                  path: newerPending.path,
+                  revision: result.value.revision,
+                };
+                pendingEdit.current = {
+                  ...newerPending,
+                  expectedRevision: result.value.revision,
+                };
+              }
+            } else if (samePendingContent) {
+              pendingEdit.current = null;
+              editBaseRevision.current = null;
+              setWorkspace(workspaceFacade.getState());
+              setSaveState(
+                result.error.code === "REVISION_CONFLICT"
+                  ? "conflict"
+                  : result.error.code === "PERSISTENCE_FAILED"
+                    ? "memory"
+                    : "saved",
+              );
+            } else {
+              if (result.error.code === "REVISION_CONFLICT") {
+                editConflict.current = true;
+              }
+              setSaveState(
+                result.error.code === "REVISION_CONFLICT"
+                  ? "conflict"
+                  : result.error.code === "PERSISTENCE_FAILED"
+                    ? "memory"
+                    : "saved",
+              );
+              return;
+            }
+          }
+        } finally {
+          uiFlushInFlight.current = false;
+          if (flushInFlight.current === operation) flushInFlight.current = null;
+          if (pendingEdit.current && !editConflict.current) {
+            window.clearTimeout(editTimer.current);
+            editTimer.current = window.setTimeout(() => {
+              editTimer.current = undefined;
+              void drainPendingEdit();
+            }, 450);
+          }
+        }
+      });
+      flushInFlight.current = operation;
+      return operation;
+    },
+    [],
+  );
 
   const updateActiveFile = useCallback(
     (code: string) => {
@@ -229,7 +258,10 @@ export function useWorkspaceController() {
       };
       setSaveState("saving");
       window.clearTimeout(editTimer.current);
-      editTimer.current = window.setTimeout(() => void flushPendingEdit(), 450);
+      editTimer.current = window.setTimeout(() => {
+        editTimer.current = undefined;
+        void flushPendingEdit();
+      }, 450);
     },
     [flushPendingEdit],
   );
@@ -271,15 +303,28 @@ export function useWorkspaceController() {
   );
 
   const resetDemo = useCallback(async () => {
+    await flushPendingEdit();
+    window.clearTimeout(editTimer.current);
+    editTimer.current = undefined;
     pendingEdit.current = null;
     editBaseRevision.current = null;
     editConflict.current = false;
-    window.clearTimeout(editTimer.current);
-    await workspaceFacade.resetDemo({
+    const result = await workspaceFacade.resetDemo({
       expectedRevision: workspaceFacade.getState().revision,
       origin: "ui",
     });
-  }, []);
+    setWorkspace(workspaceFacade.getState());
+    setSaveState(
+      result.ok
+        ? "saved"
+        : result.error.code === "REVISION_CONFLICT"
+          ? "conflict"
+          : result.error.code === "PERSISTENCE_FAILED"
+            ? "memory"
+            : "saved",
+    );
+    return result.ok;
+  }, [flushPendingEdit]);
 
   const createFile = useCallback(
     async (path: string) => {
@@ -326,20 +371,36 @@ export function useWorkspaceController() {
 
   const exportProject = useCallback(async () => {
     await flushPendingEdit();
+    const preparation = workspaceFacade.prepareProjectExport();
+    if (!preparation.ok) return;
     const result = await workspaceFacade.buildProjectZip();
     if (!result.ok) return;
     const url = URL.createObjectURL(result.value);
     const anchor = document.createElement("a");
     anchor.href = url;
-    anchor.download = `${initialStarter.projectName.toLowerCase().replace(/[^a-z0-9]+/g, "-")}.zip`;
+    anchor.download = preparation.value.filename;
     anchor.click();
     window.setTimeout(() => URL.revokeObjectURL(url), 0);
   }, [flushPendingEdit]);
 
   const files = useMemo(() => filesFromState(workspace), [workspace]);
+  const projectLabel = useMemo(
+    () => getWorkspaceProjectLabel(workspace, initialStarter),
+    [workspace],
+  );
+  const exportPreparation = useMemo(
+    () => prepareProjectExport(workspace),
+    [workspace],
+  );
 
   return {
     starter: initialStarter,
+    projectLabel,
+    projectName: projectLabel,
+    exportFilename: exportPreparation.ok
+      ? exportPreparation.value.filename
+      : "patchwork-project.zip",
+    freshSession: sessionConfig.fresh,
     starters,
     files,
     activeFile: workspace.activePath
