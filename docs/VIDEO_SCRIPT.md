@@ -2,142 +2,150 @@
 
 ## Recording status
 
-- Produced walkthrough duration: **1:50.160**.
-- Hard stop: **1:58**. The official limit remains strictly under 3:00.
-- Public YouTube URL: `[VIDEO_URL — not uploaded]`
-- Live app: `https://patchwork-webmcp.vercel.app/`
-- Source: `https://github.com/Damso74/patchwork-webmcp`
-- Local final video: `artifacts/video/patchwork-demo-under-2min.mp4` (intentionally gitignored).
-- Narration: `docs/assets/video/patchwork-narration-elevenlabs.mp3`, generated with the account-owned **Damien Voice** in ElevenLabs Multilingual v2.
-- Thumbnail: `docs/assets/video/patchwork-video-thumbnail.png`.
+- Final local encode: **1:30.000**, strictly below the official three-minute limit.
+- File: `artifacts/video/patchwork-demo-under-2min.mp4` (gitignored).
+- Format: 1920×1080 H.264, AAC mono, approximately -16 LUFS.
+- Captions: English captions are burned into the image; the matching source is `docs/assets/video/patchwork-demo.en.srt`.
+- Narration: ElevenLabs **Eric — Smooth, Trustworthy**, native English, Multilingual v2, speed `0.96`.
+- SHA-256: `89C872CB4DDCA8BD95252CE285BDBA4359EB1717569B3AB33EB18D083639F0EF`.
+- Public YouTube URL: `[VIDEO_URL — not uploaded]`.
 
-The produced walkthrough is explicitly labeled **Automated WebMCP walkthrough — same registered handlers**. It injects the documented Playwright adapter before page load and invokes the exact handlers registered by the production page. It is not presented as a ChatGPT conversation. If a native ChatGPT Site Tools take is recorded later, never substitute adapter footage without retaining this distinction.
+The take is visibly labeled **Automated WebMCP walkthrough**. It injects the documented Playwright adapter before page load and invokes the exact handlers the page registers in production. It is evidence of the handler contract, not footage of a ChatGPT conversation. A native ChatGPT recording must remain explicitly distinguishable.
 
 ## Title
 
 **Patchwork — Build with Codex, directly inside the page | WebMCP Challenge**
 
-## 1:50 shot plan and word-for-word narration
+## 1:30 shot plan and word-for-word narration
 
-### 0:00–0:21 — The reversal
+### 0:00–0:13 — Reverse the usual model
 
-**Picture:** Patchwork open on the clean Relay starter. Files, editor, and preview are visible immediately.
+**Picture:** Clean Relay starter with files, editor, live preview, the ten-tool status, and the automated-walkthrough label visible.
 
-**On-screen text:** `No chatbot · No API key · No separate MCP server`
-
-**Narration:**
-
-> Most AI coding tools pull the project into the agent. Patchwork flips that model: it lets the Codex session you already have work directly inside the web application, with no embedded chatbot, API key, extension, or separate MCP server.
-
-### 0:21–0:38 — One shared workspace
-
-**Picture:** Brief pan across Files, Code, Preview, Diagnostics, and Activity. Do not click Reset during the take.
-
-**On-screen text:** `Local-first · React + TypeScript · IndexedDB`
+**On-screen text:** `No chatbot · No API key · No extension · No separate MCP server`
 
 **Narration:**
 
-> The human keeps a real local-first workspace: virtual files, a text editor, live preview, checkpoints, and ZIP export. Everything persists in this browser, and the interface still works when Site Tools are unavailable.
+> Most AI coding tools pull projects into the agent. Patchwork reverses that. It is a browser canvas with no embedded chatbot, API key, extension, or separate MCP server.
 
-### 0:38–0:55 — Site Tools contract
+### 0:13–0:24 — One local-first workspace
 
-**Picture:** Show the ten registered tools, then the canonical prompt. In the automated take, the overlay names the adapter explicitly.
+**Picture:** Move through `content.ts`, `styles.css`, and `App.tsx` while the preview remains visible.
 
-**On-screen text:** `10 top-level WebMCP tools`
+**On-screen text:** `Files · Preview · Checkpoints · ZIP export`
 
-**Prompt shown exactly:**
+**Narration:**
+
+> Everything stays local-first. Files and checkpoints live in this browser. A human edits code, watches the preview, resets, and exports a ZIP.
+
+### 0:24–0:40 — Structured site tools
+
+**Picture:** Show the ten tool names, run context/list/read, then show the canonical mission card.
+
+**On-screen text:** `10 top-level WebMCP tools · Explicit reads · Observed revision`
+
+**Narration:**
+
+> Inside ChatGPT, Codex discovers ten WebMCP tools registered by the top-level page. It requests context, then reads only the files it needs. The page returns paths, content, sizes, and the observed revision.
+
+**Canonical prompt shown exactly:**
 
 > Inspect the current project and turn it into a premium landing page for an AI travel assistant called Roamly. Keep it responsive, use a warm Indonesian travel aesthetic, add a clear hero, three feature cards and a strong call to action. Create a checkpoint before editing, inspect the preview afterward, fix any errors you find, then summarize the files you changed.
 
-**Narration:**
+### 0:40–0:52 — One atomic mutation
 
-> When opened in ChatGPT's built-in browser, Patchwork registers ten WebMCP tools from the top-level document. This labeled walkthrough invokes those same registered handlers to read only the explicit files needed. Reads do not change the revision.
-
-### 0:55–1:22 — Atomic Roamly transformation
-
-**Picture:** Let the real tool calls run. Hold on the checkpoint, activity row, revision change, editor update, and finished Roamly preview.
+**Picture:** Create the requested manual checkpoint, then call one three-file `write_files` operation with expected revision 0.
 
 **On-screen text:** `Validate all → checkpoint → one revision → persist`
 
 **Narration:**
 
-> For the transformation, one bounded multi-file write includes the observed revision. Patchwork validates every path and size before changing anything, creates a pre-edit checkpoint, commits the batch atomically, and increments the revision once. The editor and preview update from that same authoritative workspace. If any item were invalid, the entire batch would be rejected without a partial write.
+> Now Codex updates three files in one atomic write. Patchwork validates the full batch, creates an automatic checkpoint, applies every change together, and increments the revision once.
 
-### 1:22–1:36 — Honest diagnostics and recovery
+### 0:52–1:05 — Visible receipt and real preview
 
-**Picture:** Show `Preview ready`, `No issues`, and the checkpoint popover. Do not inject a fake error.
+**Picture:** Hold the native Patchwork receipt, three highlighted files, `Custom landing page`, revision 1, then the real Roamly preview.
 
-**On-screen text:** `Compiler/runtime signals · Explicit recovery`
+**On-screen text:** `WEBMCP · WRITE_FILES · Revision 0 → 1 · Checkpoint saved`
 
 **Narration:**
 
-> The walkthrough then inspects the compiler and runtime signals available from the preview. This run reports no blocking error, so Patchwork makes no invented visual claim. Every mutation remains recoverable through an explicit checkpoint, and project data never goes to a Patchwork backend.
+> The interface responds immediately. A WebMCP receipt names the operation, the changed files are highlighted, and the preview reveals Roamly. Codex then inspects compiler and runtime diagnostics.
 
-### 1:36–1:50 — Close
+### 1:05–1:25 — Recovery, export, and why WebMCP matters
 
-**Picture:** Finished Roamly preview beside the changed files, then a clean end card.
+**Picture:** Enter Focus Preview, show Roamly, `Preview ready`, zero errors and warnings, then open the checkpoint list with Restore controls.
+
+**On-screen text:** `Explicit recovery · Export stays human-controlled`
+
+**Narration:**
+
+> A checkpoint can restore the prior state, and export remains under human control. This is why WebMCP matters: instead of guessing at pixels, the agent gets schemas, revisions, diagnostics, and atomic operations. Patchwork is independent and is not affiliated with or endorsed by OpenAI.
+
+### 1:25–1:30 — Close
+
+**Picture:** Warm Patchwork end card.
 
 **On-screen text:**
 
 ```text
 Patchwork
+Build with Codex, directly inside the page.
 patchwork-webmcp.vercel.app
 github.com/Damso74/patchwork-webmcp
 Independent project — not affiliated with or endorsed by OpenAI
 ```
 
-**Narration:**
+No narration is added to the five-second reading hold.
 
-> Patchwork makes WebMCP the structured collaboration layer between a real product interface and the agent the user already has. Try the live demo and inspect the complete open-source implementation.
+## Exact automated take order
 
-## Exact click order
-
-1. Start recording on the clean Relay workspace at revision 0, with the adapter label visible for an automated take.
-2. Hold the complete workspace for two seconds.
-3. Open Site Tools and show the tool names briefly.
-4. Paste the canonical prompt without editing it.
-5. Let the real read, checkpoint, and write calls complete.
-6. Hold on revision 1, the activity row, and the Roamly preview.
-7. Show `Preview ready`, `No issues`, and the checkpoint list.
-8. End on the finished preview and URL card.
-
-Do not demonstrate restore or ZIP download in the main take; mention recovery in narration and keep those features in README/Devpost. This saves roughly 35 seconds without weakening the WebMCP proof.
+1. Load `?demo=landing&fresh=1`; verify Relay, revision 0, 10 registered tools, Preview ready, and the real Relay heading in the iframe.
+2. Invoke `get_workspace_context`, `list_files`, and `read_files` for the three explicit files.
+3. Show the canonical prompt.
+4. Invoke `create_checkpoint` with `Before Roamly demo`.
+5. Invoke one `write_files` call for `src/App.tsx`, `src/content.ts`, and `src/styles.css` with expected revision 0.
+6. Require the visible WebMCP receipt, revision 1, three highlighted files, and the real `Go farther. Feel closer.` heading inside the iframe.
+7. Enter Focus Preview, invoke `inspect_preview`, and show its honest compiler/runtime result.
+8. Open the checkpoint list, close it, exit focus, and finish on the end card.
 
 ## Expected factual result
 
-- Initial state: Relay, revision 0, activity 0.
-- Manual checkpoint created before editing.
-- Atomic write changes `src/App.tsx`, `src/content.ts`, and `src/styles.css`.
-- Final state: Roamly, revision 1.
-- Preview status: `ready`, rendered revision 1, no reported diagnostics.
-- Revision remains stable after the write.
+- Initial state: Relay, revision 0, no checkpoint.
+- Reads do not change the revision.
+- Manual checkpoint: `Before Roamly demo`, source revision 0.
+- Atomic write: exactly three files, one automatic checkpoint, final revision 1.
+- UI receipt: `WEBMCP · WRITE_FILES`, three files, revision 0 → 1, checkpoint saved.
+- Preview: real Roamly heading visible in the Sandpack iframe.
+- Diagnostics: `ready`, rendered revision 1, zero errors and warnings in this take.
+- Console: zero application errors. The recording locally suppresses only CodeSandbox's telemetry endpoint and records each suppressed request in the proof JSON.
 
-If the real run differs, narrate only what actually happened.
+If the actual run differs, stop and record again. Never narrate a result that is not visible or present in the proof receipt.
 
-## Fast failure plan
+## Failure plan
 
-- Tool call fails before mutation: stop and begin a new take from the clean checkpoint.
-- Repairable compilation error: keep it only if the repair still finishes before 1:50; otherwise restart.
-- Site Tools unavailable: stop. Do not imitate a native session with the adapter.
-- No diagnostic error: use the honest “no blocking error” narration above.
+- Tool registration, read, or write fails: stop; reload the isolated `fresh=1` state and restart.
+- Revision is not 0 before mutation: stop; the deterministic state is invalid.
+- Editor changes but the iframe does not show Roamly: stop; never accept state-only evidence.
+- Preview reports a repairable error: repair only if the honest take still stays below the limit; otherwise restart.
+- Any console error other than the explicitly suppressed CodeSandbox telemetry request: fail the take.
+- Native Site Tools unavailable: do not imitate a native ChatGPT session with adapter footage.
 
-## Pre-recording checklist
+## Pre-upload checklist
 
-- [ ] Relay is visible at revision 0 with activity 0.
-- [ ] Preview is ready before recording starts.
-- [ ] Ten Site Tools are visible.
-- [ ] Notifications and unrelated tabs are hidden.
-- [ ] Prompt is already in the clipboard.
-- [ ] Canvas is 1080p minimum and editor text is legible.
-- [ ] Microphone audio is clear; no copyrighted music.
-- [x] Final runtime is between 1:40 and 1:58: **1:50.160 measured with ffprobe**.
-- [ ] Captions match the actual take.
-- [ ] YouTube visibility is Public.
-- [ ] Public video link works signed out.
+- [x] 1920×1080 H.264/AAC master produced.
+- [x] Final runtime measured at 90.000 seconds.
+- [x] English captions burned into the video and visually sampled.
+- [x] Roamly visibly rendered after the atomic write.
+- [x] Checkpoint list, diagnostics, revision, and end card visibly sampled.
+- [x] Audio normalized to approximately -16 LUFS with no decode error.
+- [ ] Human watches the complete master with sound at 1× speed.
+- [ ] Native ChatGPT take is recorded or the automated label remains visible and accurately described.
+- [ ] YouTube visibility is Public and the link works while signed out.
 
 ## Thumbnail
 
-The final thumbnail is a bright split view: Patchwork code on the left, a warm Indonesian preview on the right, and the exact label **“THE PAGE BECOMES THE TOOL.”** It uses only Patchwork's own visual identity and contains no OpenAI mark.
+Use the bright Patchwork split view in `docs/assets/video/patchwork-video-thumbnail.png` with the exact label **THE PAGE BECOMES THE TOOL**. It contains no OpenAI mark.
 
 ## YouTube description
 
@@ -146,12 +154,14 @@ Patchwork is a local-first browser workspace where a person and their existing C
 
 No embedded chatbot. No OpenAI API key. No extension. No separate MCP server.
 
+This video contains a clearly labeled automated walkthrough that invokes the same WebMCP handlers registered by the production page.
+
 Live demo: https://patchwork-webmcp.vercel.app/?demo=landing
 Source: https://github.com/Damso74/patchwork-webmcp
 
 Built for the OpenAI WebMCP Challenge. Patchwork is an independent project and is not affiliated with or endorsed by OpenAI.
 ```
 
-## Subtitle text
+## Caption source
 
-Use `docs/assets/video/patchwork-demo.en.srt`. Its cue boundaries follow the measured ElevenLabs audio and detected pauses; verify once more against the uploaded encode.
+`docs/assets/video/patchwork-demo.en.srt` matches the measured ElevenLabs pauses. Captions are already burned into the local MP4; upload the SRT as an additional YouTube caption track only after checking it against the final encode.

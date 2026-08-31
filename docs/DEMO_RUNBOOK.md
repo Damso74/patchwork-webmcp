@@ -6,7 +6,7 @@ Run this demo only against a verified build. Do not substitute the Playwright ad
 
 - Live URL: `https://patchwork-webmcp.vercel.app/`
 - Repository: `https://github.com/Damso74/patchwork-webmcp`
-- Submitted revision: `v1.0.2-webmcp-challenge`
+- Release-candidate revision: `v1.0.3-webmcp-challenge` (use only after the tag is pushed)
 - Real ChatGPT test: `PASS — native discovery, Roamly rendering, atomic two-file mutation, preview inspection, and revision-stability check on 2026-08-30; a clean-profile canonical take remains the recording step`
 
 ## Canonical entry points

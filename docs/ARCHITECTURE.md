@@ -4,7 +4,7 @@
 
 ## System shape
 
-Patchwork is a static, browser-only React application. The host page owns the workspace, persistence, checkpoints, export, activity, and WebMCP registration. Sandpack runs the starter project in an isolated preview iframe but does not register or own Site Tools.
+Patchwork is a static, browser-only React application. The host page owns the workspace, persistence, checkpoints, export, activity, and WebMCP registration. Sandpack runs the starter project in an isolated preview iframe but does not register or own Site Tools. Recording routes use a page-scoped `fresh=1` database so parallel demos cannot reset one another or touch the normal workspace.
 
 ```mermaid
 flowchart LR
@@ -114,7 +114,7 @@ Reset does not replay mutation history. It reconstructs the workspace from the s
 
 ## Preview and diagnostics
 
-The host converts workspace text files into Sandpack's file format. Sandpack owns compilation and preview execution inside its iframe. The host listens only to supported client/status signals and stores a compact preview state for UI and `inspect_preview`.
+The host converts the authoritative workspace text files into Sandpack's file format. Sandpack owns compilation and preview execution inside its iframe. Normal human typing stays in the current Sandpack instance so editor focus remains stable. Agent mutations, checkpoint restores, and resets create a fresh preview instance from the committed workspace; this prevents a stale iframe buffer from surviving a programmatic update. The host listens only to supported client/status signals and stores a compact preview state for UI and `inspect_preview`.
 
 Preview inspection may report:
 
@@ -155,4 +155,4 @@ The production artifact is a static Vite build suitable for Vercel or another st
 
 - Live application: `https://patchwork-webmcp.vercel.app/`
 - Public repository: `https://github.com/Damso74/patchwork-webmcp`
-- Submitted tag: `v1.0.2-webmcp-challenge`
+- Local release-candidate tag: `v1.0.3-webmcp-challenge` (push and deployment pending)

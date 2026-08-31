@@ -1,59 +1,103 @@
 1
-00:00:00,000 --> 00:00:04,365
-Most AI coding tools pull the project into the agent.
+00:00:00,000 --> 00:00:03,337
+Most AI coding tools pull projects
+into the agent.
 
 2
-00:00:04,365 --> 00:00:20,814
-Patchwork flips that model: it lets the Codex session you already have work directly inside the web application, with no embedded chatbot, API key, extension, or separate MCP server.
+00:00:03,337 --> 00:00:05,244
+Patchwork reverses that.
 
 3
-00:00:20,814 --> 00:00:31,835
-The human keeps a real local-first workspace: virtual files, a text editor, live preview, checkpoints, and ZIP export.
+00:00:05,244 --> 00:00:08,113
+It is a browser canvas
 
 4
-00:00:31,835 --> 00:00:37,977
-Everything persists in this browser, and the interface still works when Site Tools are unavailable.
+00:00:08,113 --> 00:00:12,858
+with no embedded chatbot, API key,
+extension, or separate MCP server.
 
 5
-00:00:37,977 --> 00:00:46,407
-When opened in ChatGPT's built-in browser, Patchwork registers ten WebMCP tools from the top-level document.
+00:00:12,858 --> 00:00:15,070
+Everything stays local-first.
 
 6
-00:00:46,407 --> 00:00:54,749
-This labeled walkthrough invokes those same registered handlers to read only the explicit files needed. Reads do not change the revision.
+00:00:15,070 --> 00:00:19,199
+Files and checkpoints
+live in this browser.
 
 7
-00:00:54,749 --> 00:01:00,671
-For the transformation, one bounded multi-file write includes the observed revision.
+00:00:19,199 --> 00:00:23,545
+A human edits code, watches the preview,
+resets, and exports a ZIP.
 
 8
-00:01:00,671 --> 00:01:09,733
-Patchwork validates every path and size before changing anything, creates a pre-edit checkpoint, commits the batch atomically, and increments the revision once.
+00:00:23,545 --> 00:00:28,264
+Inside ChatGPT, Codex discovers
+ten WebMCP tools
 
 9
-00:01:09,733 --> 00:01:16,338
-The editor and preview update from that same authoritative workspace.
+00:00:28,264 --> 00:00:31,993
+registered by the top-level page.
 
 10
-00:01:16,338 --> 00:01:22,241
-If any item were invalid, the entire batch would be rejected without a partial write.
+00:00:31,993 --> 00:00:35,741
+It requests context, then reads
+only the files it needs.
 
 11
-00:01:22,241 --> 00:01:27,628
-The walkthrough then inspects the compiler and runtime signals available from the preview.
+00:00:35,741 --> 00:00:39,531
+The page returns paths, content, sizes,
+and the observed revision.
 
 12
-00:01:27,628 --> 00:01:31,979
-This run reports no blocking error, so Patchwork makes no invented visual claim.
+00:00:39,531 --> 00:00:43,283
+Now Codex updates three files
+in one atomic write.
 
 13
-00:01:31,979 --> 00:01:35,764
-Every mutation remains recoverable through an explicit checkpoint, and project data never goes to a Patchwork backend.
+00:00:43,283 --> 00:00:47,329
+Patchwork validates the full batch,
+creates an automatic checkpoint,
 
 14
-00:01:35,764 --> 00:01:45,228
-Patchwork makes WebMCP the structured collaboration layer between a real product interface and the agent the user already has.
+00:00:47,329 --> 00:00:52,029
+applies every change together,
+and increments the revision once.
 
 15
-00:01:45,228 --> 00:01:50,158
-Try the live demo and inspect the complete open-source implementation.
+00:00:52,029 --> 00:00:54,029
+The interface responds immediately.
+
+16
+00:00:54,029 --> 00:00:58,630
+A WebMCP receipt names the operation,
+the changed files are highlighted,
+
+17
+00:00:58,630 --> 00:01:00,831
+and the preview reveals Roamly.
+
+18
+00:01:00,831 --> 00:01:04,612
+Codex then inspects compiler
+and runtime diagnostics.
+
+19
+00:01:04,612 --> 00:01:10,322
+A checkpoint can restore the prior state,
+and export remains under human control.
+
+20
+00:01:10,322 --> 00:01:14,433
+This is why WebMCP matters:
+instead of guessing at pixels,
+
+21
+00:01:14,433 --> 00:01:19,672
+the agent gets schemas, revisions,
+diagnostics, and atomic operations.
+
+22
+00:01:19,672 --> 00:01:24,243
+Patchwork is independent and is not
+affiliated with or endorsed by OpenAI.

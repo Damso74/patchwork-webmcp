@@ -159,6 +159,8 @@ Controls:
 - Do not use `eval`, `new Function`, or host-side dynamic script injection for workspace content.
 - Render file content only in a text editor with framework escaping.
 - Execute preview code only through Sandpack's isolated preview environment.
+- Publish a preview revision to WebMCP only after the matching Sandpack compile event and iframe load cycle; an agent never receives a guessed rendered revision.
+- Give every `fresh=1` page its own resettable IndexedDB namespace so parallel rehearsals cannot reset or broadcast stale state into one another.
 - Do not insert workspace HTML with `dangerouslySetInnerHTML`.
 - Load host scripts from the bundled application, not workspace-selected remote URLs.
 
@@ -173,7 +175,9 @@ Controls:
 - IndexedDB persistence remains origin-local.
 - Activity records paths and summaries, not contents.
 - Export is a local, explicit download.
+- Bundled starters use system font stacks and make no decorative font request.
 - Dependency and browser requests must be inspected before release; any unavoidable Sandpack runtime fetches must be documented accurately.
+- The CodeSandbox-hosted preview may attempt non-content telemetry to `col.csbops.io`. The deterministic recording harness locally returns an empty response only for that endpoint and records the suppression in its proof JSON; the production host does not claim to control third-party iframe telemetry.
 
 ## Security limits
 

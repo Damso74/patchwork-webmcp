@@ -38,10 +38,10 @@ See `package-lock.json` for the exact reproducible graph.
 - Starter UI, copy, data, CSS art, and illustrative maps: original project content.
 - Lucide icons: used under the Lucide ISC license through the npm package.
 - No OpenAI marks, copied interfaces, stock images, copyrighted music, or remote commercial assets.
-- Preview starter font requests, if present, use Google Fonts; the final submission video should avoid showing third-party branding.
-- English narration was generated on 2026-08-30 with the account-owned `Damien Voice` in ElevenLabs Multilingual v2. No voice was created, replaced, renamed, or deleted.
+- Starters use only system font stacks; the final Relay starter no longer makes a Google Fonts request.
+- English narration was generated on 2026-08-31 with ElevenLabs `Eric — Smooth, Trustworthy`, a native English voice, in Multilingual v2. The 1,189-character generation used speed `0.96`, stability `0.65`, and similarity `0.80`. No voice was created, replaced, renamed, or deleted.
 - The 16:9 thumbnail was generated specifically for Patchwork with OpenAI image generation, then edited through the same workflow for exact typography. It contains no OpenAI mark or copied interface.
-- The final walkthrough contains no copyrighted music. Its Playwright adapter label and machine-readable proof keep the automated footage distinct from native ChatGPT evidence.
+- The final 90-second walkthrough contains no music, has burned English captions, and is normalized to approximately -16 LUFS. Its Playwright adapter label and machine-readable proof keep the automated footage distinct from native ChatGPT evidence.
 
 ## Natural commit history
 
@@ -62,6 +62,10 @@ The final list is generated from real commits and must not be backdated or rewri
 13. `fix: prevent sandpack feedback writes`
 14. `docs: record native Roamly rehearsal`
 15. `docs: produce the under-two-minute demo kit`
+16. `chore: exclude local video artifacts from deploys`
+17. `docs: make demo narration evidence accurate`
+18. `feat: sharpen webmcp workspace feedback`
+19. `docs: finalize captioned demo package`
 
 Exact immutable commit identifiers are available in the public repository history; no commit was backdated or rewritten.
 

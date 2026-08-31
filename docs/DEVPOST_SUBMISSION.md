@@ -97,7 +97,7 @@ React 19, TypeScript, Vite, CodeSandbox Sandpack, IndexedDB, idb, JSZip, Vitest,
 - Live demo: `https://patchwork-webmcp.vercel.app/?demo=landing`
 - Public repository: `https://github.com/Damso74/patchwork-webmcp`
 - Public YouTube video: `[VIDEO_URL — not uploaded]`
-- Submitted tag: `v1.0.2-webmcp-challenge`
+- Release-candidate tag: `v1.0.3-webmcp-challenge` (push pending)
 
 ## Repository
 
@@ -115,7 +115,7 @@ Other deterministic routes: `?demo=dashboard` and `?demo=travel`.
 
 `[VIDEO_URL — not uploaded]`
 
-The finished local encode is 1:50.160 at 1920×1080 with ElevenLabs narration and no copyrighted music. It is labeled as an automated WebMCP walkthrough using the same production-registered handlers; it is not presented as a ChatGPT conversation. Required state before submission: complete human sound/image review and public YouTube visibility.
+The finished local encode is 1:30.000 at 1920×1080 with native-English ElevenLabs narration, burned English captions, and no music. It is labeled as an automated WebMCP walkthrough using the same production-registered handlers; it is not presented as a ChatGPT conversation. Required state before submission: complete human sound/image review and public YouTube visibility.
 
 ## Testing instructions
 
@@ -146,12 +146,12 @@ Patchwork is an independent project and is not affiliated with or endorsed by Op
 
 ## Final factual checklist
 
-- [x] Every described feature exists in the submitted build.
+- [ ] Every described feature exists in the final deployed build; recheck after the 1.0.3 candidate is deployed.
 - [x] All validation results are recorded with exact pass/fail/not-run status.
 - [x] Real ChatGPT testing is described accurately and not replaced by adapter evidence.
 - [x] Live URL works in a clean, signed-out context.
 - [x] Public repository exposes source, instructions, and detectable MIT license.
-- [x] Video runtime is strictly below three minutes: 1:50.160 measured.
+- [x] Video runtime is strictly below three minutes: 1:30.000 measured.
 - [ ] Video URL is public and verified signed out.
 - [ ] Placeholders are removed.
 - [ ] Submitted artifacts are frozen after the deadline.

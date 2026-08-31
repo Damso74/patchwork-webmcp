@@ -77,6 +77,8 @@ Open `http://localhost:5173/?demo=landing`. Other stable scenarios:
 - `?demo=dashboard`
 - `?demo=travel`
 
+For a repeatable recording without touching the normal saved project, add `&fresh=1`. This uses a page-scoped IndexedDB namespace, isolates simultaneous demo tabs, and restores that starter on each load.
+
 ## Validate
 
 ```bash
@@ -125,7 +127,7 @@ Patchwork is intentionally a small-project demo. It supports allowlisted text fi
 
 - Live demo: [patchwork-webmcp.vercel.app](https://patchwork-webmcp.vercel.app/?demo=landing)
 - Public repository: [github.com/Damso74/patchwork-webmcp](https://github.com/Damso74/patchwork-webmcp)
-- Demo video: **finished 1:50 local encode; pending final human sound/image review and public YouTube upload**
+- Demo video: **finished 1:30 local 1080p encode with burned English captions; pending final human sound/image review and public YouTube upload**
 - [Video thumbnail and asset provenance](docs/assets/video/README.md)
 - [Official requirements evidence](docs/HACKATHON_REQUIREMENTS.md)
 - [Demo runbook](docs/DEMO_RUNBOOK.md)
