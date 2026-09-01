@@ -20,20 +20,21 @@ This document is updated from actual command output. `Passed` is never used for 
 
 The rows below describe public release `v1.0.3-webmcp-challenge` at commit `6090a4a2a97a889f51dfa61c99faaf374313e098`, except where an earlier rehearsal is labeled explicitly.
 
-| Evidence                                       | Status  | Notes                                                                            |
-| ---------------------------------------------- | ------- | -------------------------------------------------------------------------------- |
-| Local production browser smoke                 | Passed  | Playwright exercised the Vite production preview                                 |
-| Public unauthenticated HTTP                    | Passed  | GitHub and Vercel returned HTTP 200                                              |
-| Public starter/reset/export smoke              | Passed  | 26/26 Playwright checks at the production alias on 2026-09-01                    |
-| Public console error scan                      | Passed  | No console/page errors in the bounded public run                                 |
-| Exact GitHub/Vercel commit match               | Passed  | Vercel deployment metadata matched the pushed `main` SHA                         |
-| Native in-app discovery and read-only preview  | Passed  | 10 tools; UI, context, and `inspect_preview` all reported `ready`                |
-| Native v1.0.3 mutation, restore, and stability | Passed  | One-file write at revision 1, explicit restore at revision 2, stable and ready   |
-| Historical v1.0.2 clean-origin rehearsals      | Passed  | Two fresh origins completed three-file Roamly writes at revision 0 → 1           |
-| Labeled automated walkthrough                  | Passed  | Same registered handlers; clean profile; proof receipt; 0 preview diagnostics    |
-| Final 1080p video encode                       | Passed  | 1:30.000, burned captions, persistent adapter label, audio at -16.51 LUFS        |
-| Public 1.0.3 production deployment             | Passed  | Vercel `READY`; deployment `dpl_9pGYocF1EByTZikSDXdofykUcTY4`; exact SHA         |
-| Public video publication and signed-out play   | Not run | Older private upload is superseded; new labeled master still needs public upload |
+| Evidence                                          | Status | Notes                                                                                 |
+| ------------------------------------------------- | ------ | ------------------------------------------------------------------------------------- |
+| Local production browser smoke                    | Passed | Playwright exercised the Vite production preview                                      |
+| Public unauthenticated HTTP                       | Passed | GitHub and Vercel returned HTTP 200                                                   |
+| Public starter/reset/export smoke                 | Passed | 26/26 Playwright checks at the production alias on 2026-09-01                         |
+| Public console error scan                         | Passed | No console/page errors in the bounded public run                                      |
+| Exact tagged GitHub/Vercel commit match           | Passed | Vercel metadata matches release tag `v1.0.3-webmcp-challenge`                         |
+| Native in-app discovery and read-only preview     | Passed | 10 tools; UI, context, and `inspect_preview` all reported `ready`                     |
+| Native v1.0.3 mutation, restore, and stability    | Passed | One-file write at revision 1, explicit restore at revision 2, stable and ready        |
+| Historical v1.0.2 clean-origin rehearsals         | Passed | Two fresh origins completed three-file Roamly writes at revision 0 → 1                |
+| Labeled automated walkthrough                     | Passed | Same registered handlers; clean profile; proof receipt; 0 preview diagnostics         |
+| Final 1080p video encode                          | Passed | 1:30.000, burned captions, persistent adapter label, audio at -16.51 LUFS             |
+| Public 1.0.3 production deployment                | Passed | Vercel `READY`; deployment `dpl_9pGYocF1EByTZikSDXdofykUcTY4`; exact SHA              |
+| Public video publication and unauthenticated play | Passed | Public `Xxd2tr92WjM`; oEmbed title resolved; watch status `OK`; `en`/`en-US` captions |
+| Devpost 4/5 draft reload                          | Passed | Story, nine tags, two links, two captioned images, public video, and entrant verified |
 
 The public release receipt verifies the GitHub release, anonymous validation-pack hash, Vercel production deployment and exact commit, 26 laptop/tablet checks, three clean-browser starter renders with zero console errors, and the native WebMCP receipt. See [`PUBLIC_RELEASE_RECEIPT.json`](https://github.com/Damso74/patchwork-webmcp/releases/download/v1.0.3-webmcp-challenge/PUBLIC_RELEASE_RECEIPT.json).
 

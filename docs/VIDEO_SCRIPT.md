@@ -8,7 +8,7 @@
 - Captions: English captions are burned into the image; the matching source is `docs/assets/video/patchwork-demo.en.srt`.
 - Narration: ElevenLabs **Eric — Smooth, Trustworthy**, English-language, Multilingual v2, speed `0.96`.
 - SHA-256: `1AE559538600C5C511141A26D91C3F1489309AD17C4112F7978C522F9BB5EC1E`.
-- YouTube: the older private upload `https://youtu.be/UmDFvW6sHHA` is superseded; upload this newly labeled master as a new public video and verify it signed out.
+- YouTube: [https://youtu.be/Xxd2tr92WjM](https://youtu.be/Xxd2tr92WjM), Public and reachable through YouTube's unauthenticated oEmbed endpoint.
 
 The take is persistently labeled **Automated adapter walkthrough — not ChatGPT footage**. It injects the documented Playwright adapter before page load and invokes the exact handlers the page registers in production. It is evidence of the handler contract, not footage of a ChatGPT conversation. The narration phrase “Inside ChatGPT” describes the native product capability; the persistent label makes clear that the pictured walkthrough is the adapter run.
 
@@ -141,7 +141,7 @@ If the actual run differs, stop and record again. Never narrate a result that is
 - [x] Audio normalized to approximately -16 LUFS with no decode error.
 - [ ] Human watches the complete master with sound at 1× speed.
 - [x] The persistent `Automated adapter walkthrough — not ChatGPT footage` label remains visible in the reviewed contact sheet and is accurately described; no ChatGPT conversation is claimed.
-- [ ] YouTube visibility is Public and the link works while signed out.
+- [x] YouTube visibility is Public and the link works without authentication.
 
 ## Thumbnail
 
@@ -164,4 +164,4 @@ Built for the OpenAI WebMCP Challenge. Patchwork is an independent project and i
 
 ## Caption source
 
-`docs/assets/video/patchwork-demo.en.srt` matches the measured ElevenLabs pauses. Captions are already burned into the local MP4. The SRT is ready for the YouTube English caption track, but the remote caption save is not claimed until it is verified in Studio.
+`docs/assets/video/patchwork-demo.en.srt` matches the measured ElevenLabs pauses. Captions are burned into the local MP4 and the same SRT was published in YouTube Studio as an English (United States) track. The public watch response exposes `en` and `en-US` caption tracks.

@@ -28,6 +28,6 @@ The deterministic recording URL adds `fresh=1`, which uses an isolated IndexedDB
 
 The final local encode is `artifacts/video/patchwork-demo-under-2min.mp4`: 90.000 seconds, 1920×1080 H.264, AAC narration normalized to approximately -16 LUFS, English captions burned into the image, and a persistent **Automated adapter walkthrough — not ChatGPT footage** label. Its SHA-256 is `1AE559538600C5C511141A26D91C3F1489309AD17C4112F7978C522F9BB5EC1E`.
 
-The final local encode is intentionally ignored by Git because the submission links to a hosted video rather than storing a large binary in repository history. The older private upload at `https://youtu.be/UmDFvW6sHHA` predates the persistent evidence label and is superseded. Upload the labeled master as a new public video, then verify the new URL signed out.
+The final local encode is intentionally ignored by Git because the submission links to a hosted video rather than storing a large binary in repository history. The labeled master is published at [https://youtu.be/Xxd2tr92WjM](https://youtu.be/Xxd2tr92WjM). YouTube reports Public visibility, no copyright issue, English (United States) language, and published English captions; unauthenticated oEmbed and watch-page checks succeeded on 2026-09-01.
 
 No copyrighted music is included.

@@ -1,6 +1,6 @@
 # Devpost submission copy
 
-> This copy matches public release `v1.0.3-webmcp-challenge`. Do not submit until the YouTube link is public and the entrant personally accepts the Official Rules.
+> This copy matches public release `v1.0.3-webmcp-challenge`. The public video and the complete 4/5 Devpost draft are verified; the entrant must personally accept the Official Rules before submitting.
 
 ## Project name
 
@@ -94,7 +94,7 @@ React 19, TypeScript, Vite, CodeSandbox Sandpack, IndexedDB, idb, JSZip, Vitest,
 
 - Live demo: `https://patchwork-webmcp.vercel.app/?demo=landing`
 - Public repository: `https://github.com/Damso74/patchwork-webmcp`
-- Video: final labeled master ready; the private pre-label upload `https://youtu.be/UmDFvW6sHHA` is superseded and must be replaced with the new public YouTube URL before submission
+- Video: `https://youtu.be/Xxd2tr92WjM`
 - Public release: `https://github.com/Damso74/patchwork-webmcp/releases/tag/v1.0.3-webmcp-challenge`
 
 ## Repository
@@ -111,9 +111,9 @@ Other deterministic routes: `?demo=dashboard` and `?demo=travel`.
 
 ## Video
 
-The final public YouTube URL will be inserted after the newly labeled master is uploaded. Do not submit the superseded private pre-label upload `https://youtu.be/UmDFvW6sHHA`.
+[https://youtu.be/Xxd2tr92WjM](https://youtu.be/Xxd2tr92WjM)
 
-The finished encode is 1:30.000 at 1920×1080 with English-language ElevenLabs narration, burned English captions, no music, and a persistent **Automated adapter walkthrough — not ChatGPT footage** label. It uses the same production-registered handlers and is not presented as a ChatGPT conversation. Public YouTube visibility remains required before submission.
+The public encode is 1:30.000 at 1920×1080 with English-language ElevenLabs narration, burned English captions, no music, and a persistent **Automated adapter walkthrough — not ChatGPT footage** label. It uses the same production-registered handlers and is not presented as a ChatGPT conversation. YouTube reports Public visibility, no copyright issue, English (United States) language, and a published English caption track. Unauthenticated oEmbed and watch-page checks succeeded on 2026-09-01.
 
 ## Devpost additional information field map
 
@@ -124,8 +124,8 @@ The finished encode is 1:30.000 at 1920×1080 with English-language ElevenLabs n
 - **Career AI value:** Yes
 - **Clients used to test WebMCP:** Codex in-app browser with native Site Tools (ten production-registered tools), plus Chromium through Playwright with an injected WebMCP registration adapter that invokes the same production handlers for deterministic end-to-end tests.
 - **AI tools used:** Codex for product design, implementation, testing, documentation, and release verification; ElevenLabs for the English demo narration. Patchwork itself makes no direct OpenAI API call and requires no API key.
-- **Team state:** Individual entry; verify that no teammate is missing before personal submission.
-- **Media state:** Verify that the project thumbnail and gallery survive a draft reload before personal submission.
+- **Team state:** Verified individual entry with Damien CREDOZ as the sole entrant.
+- **Media state:** Verified after reload: project thumbnail, two gallery images and captions, public video, live URL, and repository URL are present.
 
 ## Testing instructions
 
@@ -162,6 +162,6 @@ Patchwork is an independent project and is not affiliated with or endorsed by Op
 - [x] Live URL works in a clean, signed-out context.
 - [x] Public repository exposes source, instructions, and detectable MIT license.
 - [x] Video runtime is strictly below three minutes: 1:30.000 measured.
-- [ ] Video URL is public and verified signed out.
+- [x] Video URL is public and verified without authentication.
 - [x] Bracketed placeholders are removed.
 - [ ] Submitted artifacts are frozen after the deadline.

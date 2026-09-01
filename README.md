@@ -127,7 +127,7 @@ Patchwork is intentionally a small-project demo. It supports allowlisted text fi
 
 - Live demo: [patchwork-webmcp.vercel.app](https://patchwork-webmcp.vercel.app/?demo=landing)
 - Public repository: [github.com/Damso74/patchwork-webmcp](https://github.com/Damso74/patchwork-webmcp)
-- Demo video: **final 1:30 labeled master ready locally; the older [private upload](https://youtu.be/UmDFvW6sHHA) is superseded and a new public YouTube upload is still required**
+- Demo video: [**public 1:30 walkthrough**](https://youtu.be/Xxd2tr92WjM) with English narration, English captions, and a persistent **Automated adapter walkthrough — not ChatGPT footage** label
 - [Video thumbnail and asset provenance](docs/assets/video/README.md)
 - [Official requirements evidence](docs/HACKATHON_REQUIREMENTS.md)
 - [Demo runbook](docs/DEMO_RUNBOOK.md)
