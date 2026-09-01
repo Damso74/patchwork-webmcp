@@ -9,7 +9,7 @@ Patchwork is a static, browser-only React application. The host page owns the wo
 ```mermaid
 flowchart LR
   Human[Human controls] --> UI[React host UI]
-  Agent[Codex in built-in browser] --> WM[Top-level WebMCP adapter]
+  Agent[Codex in built-in browser] --> WM[Top-level WebMCP integration]
   UI --> Domain[Workspace domain services]
   WM --> Domain
   Domain --> Store[IndexedDB persistence]
@@ -155,4 +155,4 @@ The production artifact is a static Vite build suitable for Vercel or another st
 
 - Live application: `https://patchwork-webmcp.vercel.app/`
 - Public repository: `https://github.com/Damso74/patchwork-webmcp`
-- Local release-candidate tag: `v1.0.3-webmcp-challenge` (push and deployment pending)
+- Public release: [`v1.0.3-webmcp-challenge`](https://github.com/Damso74/patchwork-webmcp/releases/tag/v1.0.3-webmcp-challenge) at commit `6090a4a2a97a889f51dfa61c99faaf374313e098`

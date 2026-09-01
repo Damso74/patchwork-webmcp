@@ -6,11 +6,11 @@
 - File: `artifacts/video/patchwork-demo-under-2min.mp4` (gitignored).
 - Format: 1920×1080 H.264, AAC mono, approximately -16 LUFS.
 - Captions: English captions are burned into the image; the matching source is `docs/assets/video/patchwork-demo.en.srt`.
-- Narration: ElevenLabs **Eric — Smooth, Trustworthy**, native English, Multilingual v2, speed `0.96`.
-- SHA-256: `89C872CB4DDCA8BD95252CE285BDBA4359EB1717569B3AB33EB18D083639F0EF`.
-- Public YouTube URL: `[VIDEO_URL — not uploaded]`.
+- Narration: ElevenLabs **Eric — Smooth, Trustworthy**, English-language, Multilingual v2, speed `0.96`.
+- SHA-256: `1AE559538600C5C511141A26D91C3F1489309AD17C4112F7978C522F9BB5EC1E`.
+- YouTube: the older private upload `https://youtu.be/UmDFvW6sHHA` is superseded; upload this newly labeled master as a new public video and verify it signed out.
 
-The take is visibly labeled **Automated WebMCP walkthrough**. It injects the documented Playwright adapter before page load and invokes the exact handlers the page registers in production. It is evidence of the handler contract, not footage of a ChatGPT conversation. A native ChatGPT recording must remain explicitly distinguishable.
+The take is persistently labeled **Automated adapter walkthrough — not ChatGPT footage**. It injects the documented Playwright adapter before page load and invokes the exact handlers the page registers in production. It is evidence of the handler contract, not footage of a ChatGPT conversation. The narration phrase “Inside ChatGPT” describes the native product capability; the persistent label makes clear that the pictured walkthrough is the adapter run.
 
 ## Title
 
@@ -40,7 +40,7 @@ The take is visibly labeled **Automated WebMCP walkthrough**. It injects the doc
 
 ### 0:24–0:40 — Structured site tools
 
-**Picture:** Show the ten tool names, run context/list/read, then show the canonical mission card.
+**Picture:** Show the ten tool names, run context/list/read, then show the canonical mission card. Keep the persistent `Automated adapter walkthrough — not ChatGPT footage` label visible.
 
 **On-screen text:** `10 top-level WebMCP tools · Explicit reads · Observed revision`
 
@@ -64,7 +64,7 @@ The take is visibly labeled **Automated WebMCP walkthrough**. It injects the doc
 
 ### 0:52–1:05 — Visible receipt and real preview
 
-**Picture:** Hold the native Patchwork receipt, three highlighted files, `Custom landing page`, revision 1, then the real Roamly preview.
+**Picture:** Hold the in-page Patchwork receipt, three highlighted files, `Custom landing page`, revision 1, then the real Roamly preview.
 
 **On-screen text:** `WEBMCP · WRITE_FILES · Revision 0 → 1 · Checkpoint saved`
 
@@ -140,7 +140,7 @@ If the actual run differs, stop and record again. Never narrate a result that is
 - [x] Checkpoint list, diagnostics, revision, and end card visibly sampled.
 - [x] Audio normalized to approximately -16 LUFS with no decode error.
 - [ ] Human watches the complete master with sound at 1× speed.
-- [ ] Native ChatGPT take is recorded or the automated label remains visible and accurately described.
+- [x] The persistent `Automated adapter walkthrough — not ChatGPT footage` label remains visible in the reviewed contact sheet and is accurately described; no ChatGPT conversation is claimed.
 - [ ] YouTube visibility is Public and the link works while signed out.
 
 ## Thumbnail
@@ -164,4 +164,4 @@ Built for the OpenAI WebMCP Challenge. Patchwork is an independent project and i
 
 ## Caption source
 
-`docs/assets/video/patchwork-demo.en.srt` matches the measured ElevenLabs pauses. Captions are already burned into the local MP4; upload the SRT as an additional YouTube caption track only after checking it against the final encode.
+`docs/assets/video/patchwork-demo.en.srt` matches the measured ElevenLabs pauses. Captions are already burned into the local MP4. The SRT is ready for the YouTube English caption track, but the remote caption save is not claimed until it is verified in Studio.

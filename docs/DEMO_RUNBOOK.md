@@ -2,12 +2,12 @@
 
 ## Truth gate
 
-Run this demo only against a verified build. Do not substitute the Playwright adapter for a real ChatGPT Site Tools session without labeling it clearly. Update the placeholders below before recording or submitting.
+Run this demo only against a verified build. Do not substitute the Playwright adapter for a native Site Tools session without labeling it clearly.
 
 - Live URL: `https://patchwork-webmcp.vercel.app/`
 - Repository: `https://github.com/Damso74/patchwork-webmcp`
-- Release-candidate revision: `v1.0.3-webmcp-challenge` (use only after the tag is pushed)
-- Real ChatGPT test: `PASS — native discovery, Roamly rendering, atomic two-file mutation, preview inspection, and revision-stability check on 2026-08-30; a clean-profile canonical take remains the recording step`
+- Public release: `v1.0.3-webmcp-challenge`, commit `6090a4a2a97a889f51dfa61c99faaf374313e098`
+- Native Codex in-app-browser proof: `PASS — 10 top-level tools, revision 0 → 1 write → 2 restore, preview ready, and zero console errors on 2026-08-31`
 
 ## Canonical entry points
 

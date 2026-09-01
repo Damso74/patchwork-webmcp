@@ -1,6 +1,6 @@
 # WebMCP implementation
 
-> Public tool contract for Patchwork. Automated and real ChatGPT test results must be recorded separately in `docs/VERIFICATION.md`; this document does not claim that an unrecorded test passed.
+> Public tool contract for Patchwork. Automated adapter evidence, native Codex in-app-browser evidence, and a manual ChatGPT run are recorded separately in `docs/VERIFICATION.md`; this document does not claim that an unrecorded test passed.
 
 ## Why WebMCP is load-bearing
 
@@ -190,17 +190,19 @@ Integration coverage should confirm:
 - Missing WebMCP does not break the human workflow.
 - Re-registration attempts do not duplicate tools.
 
-## Manual ChatGPT proof
+## Native Codex in-app-browser proof
 
-Native read-only preflight evidence recorded before the full filmed mutation:
+Final native production evidence:
 
-- Date: `2026-08-30`
-- Environment: ChatGPT Codex in-app browser
-- Model: current Codex session; the filmed run should record its exact selected model
-- Live URL: `https://patchwork-webmcp.vercel.app/?demo=landing`
-- Prompt: canonical Roamly prompt from `docs/DEMO_RUNBOOK.md`
+- Date: `2026-08-31`
+- Environment: Codex in-app browser
+- Live URL: `https://patchwork-webmcp.vercel.app/?demo=landing&fresh=1`
+- Release: `v1.0.3-webmcp-challenge`, commit `6090a4a2a97a889f51dfa61c99faaf374313e098`
 - Discovered tools: `10`, registered from the top-level page
-- Result: `PASS for native production mutation` — discovery, reads, checkpoint, an atomic two-file write, visible preview update, diagnostics, and five-second revision stability succeeded on release 1.0.2. The clean-profile canonical take remains the recording step; see `docs/VERIFICATION.md` for the failed 1.0.1 rehearsal and exact 1.0.2 evidence.
+- Result: `PASS` — context and explicit file reads at revision 0, a manual checkpoint, one atomic write at revision 1, an explicit restore at revision 2, matching preview revisions, and zero browser console errors.
+- Receipt: [`NATIVE_WEBMCP_V1.0.3_RECEIPT.json`](https://github.com/Damso74/patchwork-webmcp/releases/download/v1.0.3-webmcp-challenge/NATIVE_WEBMCP_V1.0.3_RECEIPT.json)
+
+This receipt is a native WebMCP invocation in the Codex in-app browser. It is not footage of a ChatGPT conversation, and the separate manual ChatGPT run remains explicitly `Not run` unless recorded in `docs/VERIFICATION.md`.
 
 An adapter-based test is valuable automated evidence, but it must always be labeled as adapter-based and never presented as a real ChatGPT Site Tools session.
 

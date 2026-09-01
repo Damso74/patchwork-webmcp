@@ -1,6 +1,6 @@
 # Devpost submission copy
 
-> Paste only after `docs/VERIFICATION.md` confirms every named capability. Replace every bracketed placeholder. Remove any statement that does not match the submitted build.
+> This copy matches public release `v1.0.3-webmcp-challenge`. Do not submit until the YouTube link is public and the entrant personally accepts the Official Rules.
 
 ## Project name
 
@@ -12,7 +12,7 @@ Build with Codex, directly inside the page.
 
 ## Short description
 
-Patchwork is a local-first browser workspace that exposes a small web project to the user's existing Codex session through structured WebMCP Site Tools—without an embedded chatbot, API key, extension, or separate MCP server.
+Patchwork lets a person and Codex edit the same local-first web project through structured WebMCP Site Tools—without a chatbot, API key, extension, backend, or separate MCP server.
 
 ## Inspiration
 
@@ -76,8 +76,6 @@ Finally, UI actions and agent calls had to stay consistent. We avoided parallel 
 - Graceful human operation when Site Tools are unavailable.
 - A production-handler test adapter that does not duplicate business logic.
 
-Before submission, keep only accomplishments confirmed in `docs/VERIFICATION.md`.
-
 ## What we learned
 
 WebMCP is most valuable when a web product already has clear domain operations. The best tools are not generic clicks; they expose meaningful application actions with narrow inputs, honest side effects, and enough result data to verify the outcome.
@@ -96,8 +94,8 @@ React 19, TypeScript, Vite, CodeSandbox Sandpack, IndexedDB, idb, JSZip, Vitest,
 
 - Live demo: `https://patchwork-webmcp.vercel.app/?demo=landing`
 - Public repository: `https://github.com/Damso74/patchwork-webmcp`
-- Public YouTube video: `[VIDEO_URL — not uploaded]`
-- Release-candidate tag: `v1.0.3-webmcp-challenge` (push pending)
+- Video: final labeled master ready; the private pre-label upload `https://youtu.be/UmDFvW6sHHA` is superseded and must be replaced with the new public YouTube URL before submission
+- Public release: `https://github.com/Damso74/patchwork-webmcp/releases/tag/v1.0.3-webmcp-challenge`
 
 ## Repository
 
@@ -113,9 +111,21 @@ Other deterministic routes: `?demo=dashboard` and `?demo=travel`.
 
 ## Video
 
-`[VIDEO_URL — not uploaded]`
+The final public YouTube URL will be inserted after the newly labeled master is uploaded. Do not submit the superseded private pre-label upload `https://youtu.be/UmDFvW6sHHA`.
 
-The finished local encode is 1:30.000 at 1920×1080 with native-English ElevenLabs narration, burned English captions, and no music. It is labeled as an automated WebMCP walkthrough using the same production-registered handlers; it is not presented as a ChatGPT conversation. Required state before submission: complete human sound/image review and public YouTube visibility.
+The finished encode is 1:30.000 at 1920×1080 with English-language ElevenLabs narration, burned English captions, no music, and a persistent **Automated adapter walkthrough — not ChatGPT footage** label. It uses the same production-registered handlers and is not presented as a ChatGPT conversation. Public YouTube visibility remains required before submission.
+
+## Devpost additional information field map
+
+- **Submitter Type:** Individual
+- **Country:** France
+- **App Status:** New
+- **Learning or skill development:** Significant
+- **Career AI value:** Yes
+- **Clients used to test WebMCP:** Codex in-app browser with native Site Tools (ten production-registered tools), plus Chromium through Playwright with an injected WebMCP registration adapter that invokes the same production handlers for deterministic end-to-end tests.
+- **AI tools used:** Codex for product design, implementation, testing, documentation, and release verification; ElevenLabs for the English demo narration. Patchwork itself makes no direct OpenAI API call and requires no API key.
+- **Team state:** Individual entry; verify that no teammate is missing before personal submission.
+- **Media state:** Verify that the project thumbnail and gallery survive a draft reload before personal submission.
 
 ## Testing instructions
 
@@ -146,12 +156,12 @@ Patchwork is an independent project and is not affiliated with or endorsed by Op
 
 ## Final factual checklist
 
-- [ ] Every described feature exists in the final deployed build; recheck after the 1.0.3 candidate is deployed.
+- [x] Every described feature exists in the deployed v1.0.3 build.
 - [x] All validation results are recorded with exact pass/fail/not-run status.
-- [x] Real ChatGPT testing is described accurately and not replaced by adapter evidence.
+- [x] Native Codex, adapter, and manual ChatGPT evidence are described as separate states.
 - [x] Live URL works in a clean, signed-out context.
 - [x] Public repository exposes source, instructions, and detectable MIT license.
 - [x] Video runtime is strictly below three minutes: 1:30.000 measured.
 - [ ] Video URL is public and verified signed out.
-- [ ] Placeholders are removed.
+- [x] Bracketed placeholders are removed.
 - [ ] Submitted artifacts are frozen after the deadline.

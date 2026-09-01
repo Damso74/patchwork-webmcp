@@ -1,6 +1,6 @@
 # WebMCP Challenge requirements
 
-Verified against the official sources on **August 30, 2026**. The official rules and challenge website take precedence over this summary.
+Verified again against the official challenge page and rules on **September 1, 2026**. The official rules and challenge website take precedence over this summary.
 
 ## Deadline and submission window
 
@@ -36,7 +36,7 @@ The project must remain available free of charge for judging. There is no offici
 - Publicly visible on YouTube.
 - A clear working demo with audio explaining what was built and how WebMCP is used.
 - No unlicensed music, third-party marks, or protected material.
-- Must match the submitted build. Patchwork targets `02:30–02:45`.
+- Must match the submitted build. Patchwork's final measured encode is `01:30.000`.
 
 ## Repository, license, and provenance
 

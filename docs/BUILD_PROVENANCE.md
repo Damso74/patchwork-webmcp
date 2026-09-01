@@ -7,6 +7,8 @@
 - **Repository:** [github.com/Damso74/patchwork-webmcp](https://github.com/Damso74/patchwork-webmcp), with new standalone Git history; no ArcadeOps or other project history copied
 - **License:** MIT
 - **Primary language:** TypeScript with strict compiler settings
+- **Public release:** `v1.0.3-webmcp-challenge` at `6090a4a2a97a889f51dfa61c99faaf374313e098`
+- **Production deployment:** Vercel `dpl_9pGYocF1EByTZikSDXdofykUcTY4`, `READY`, exact release commit
 
 ## Technical choices
 
@@ -39,9 +41,9 @@ See `package-lock.json` for the exact reproducible graph.
 - Lucide icons: used under the Lucide ISC license through the npm package.
 - No OpenAI marks, copied interfaces, stock images, copyrighted music, or remote commercial assets.
 - Starters use only system font stacks; the final Relay starter no longer makes a Google Fonts request.
-- English narration was generated on 2026-08-31 with ElevenLabs `Eric — Smooth, Trustworthy`, a native English voice, in Multilingual v2. The 1,189-character generation used speed `0.96`, stability `0.65`, and similarity `0.80`. No voice was created, replaced, renamed, or deleted.
+- English-language narration was generated on 2026-08-31 with ElevenLabs `Eric — Smooth, Trustworthy` in Multilingual v2. The 1,189-character generation used speed `0.96`, stability `0.65`, and similarity `0.80`. No voice was created, replaced, renamed, or deleted.
 - The 16:9 thumbnail was generated specifically for Patchwork with OpenAI image generation, then edited through the same workflow for exact typography. It contains no OpenAI mark or copied interface.
-- The final 90-second walkthrough contains no music, has burned English captions, and is normalized to approximately -16 LUFS. Its Playwright adapter label and machine-readable proof keep the automated footage distinct from native ChatGPT evidence.
+- The final 90-second walkthrough contains no music, has burned English captions, and is normalized to approximately -16 LUFS. Its persistent Playwright-adapter label and machine-readable proof keep the automated footage distinct from native Codex in-app-browser evidence.
 
 ## Natural commit history
 
@@ -66,9 +68,10 @@ The final list is generated from real commits and must not be backdated or rewri
 17. `docs: make demo narration evidence accurate`
 18. `feat: sharpen webmcp workspace feedback`
 19. `docs: finalize captioned demo package`
+20. `docs: finalize public submission handoff`
 
-Exact immutable commit identifiers are available in the public repository history; no commit was backdated or rewritten.
+Commits 1–19 and their immutable identifiers are available in the public repository history. Commit 20 is this local submission handoff and is intentionally held until the video and Devpost draft are verified. No commit was backdated or rewritten.
 
 ## Validation truth gate
 
-Only results captured in [VERIFICATION.md](VERIFICATION.md) after actual commands are treated as passed. A local build, HTTP 200, browser harness, Vercel deployment, and real ChatGPT Site Tools run are separate evidence states.
+Only results captured in [VERIFICATION.md](VERIFICATION.md) after actual commands are treated as passed. A local build, HTTP 200, browser harness, Vercel deployment, native Codex Site Tools run, manual ChatGPT run, and public video are separate evidence states.

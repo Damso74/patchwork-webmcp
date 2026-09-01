@@ -3,7 +3,7 @@
 ## Narration
 
 - File: `patchwork-narration-elevenlabs.mp3`
-- Generated: 2026-08-31 with **Eric — Smooth, Trustworthy**, a native English ElevenLabs voice, in Eleven Multilingual v2
+- Generated: 2026-08-31 with **Eric — Smooth, Trustworthy**, an English-language ElevenLabs voice, in Eleven Multilingual v2
 - Settings: speed `0.96`, stability `0.65`, similarity `0.80`, speaker boost enabled
 - Measured duration: 84.611 seconds
 - Audio: 44.1 kHz mono, 128 kbit/s MP3
@@ -26,8 +26,8 @@ Run `npm run record:demo` to generate a 1920×1080 Playwright walkthrough in `ar
 
 The deterministic recording URL adds `fresh=1`, which uses an isolated IndexedDB namespace and never replaces the user's normal saved workspace. The recording locally suppresses only CodeSandbox's `col.csbops.io/data/sandpack` telemetry request and records that fact in the proof JSON; every other console error fails the take.
 
-The final local encode is `artifacts/video/patchwork-demo-under-2min.mp4`: 90.000 seconds, 1920×1080 H.264, AAC narration normalized to approximately -16 LUFS, and English captions burned into the image. Its SHA-256 is `89C872CB4DDCA8BD95252CE285BDBA4359EB1717569B3AB33EB18D083639F0EF`.
+The final local encode is `artifacts/video/patchwork-demo-under-2min.mp4`: 90.000 seconds, 1920×1080 H.264, AAC narration normalized to approximately -16 LUFS, English captions burned into the image, and a persistent **Automated adapter walkthrough — not ChatGPT footage** label. Its SHA-256 is `1AE559538600C5C511141A26D91C3F1489309AD17C4112F7978C522F9BB5EC1E`.
 
-The final local encode is intentionally ignored by Git because the public submission should link to the reviewed hosted video rather than store a large binary in repository history. Review the complete encode with sound before any public upload.
+The final local encode is intentionally ignored by Git because the submission links to a hosted video rather than storing a large binary in repository history. The older private upload at `https://youtu.be/UmDFvW6sHHA` predates the persistent evidence label and is superseded. Upload the labeled master as a new public video, then verify the new URL signed out.
 
 No copyrighted music is included.

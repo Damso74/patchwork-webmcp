@@ -211,8 +211,8 @@ Controls:
 - [x] No `eval`, `new Function`, or workspace-driven host script injection.
 - [x] Sandpack preview uses the exact `allow-scripts allow-same-origin` sandbox and no capability-policy allowlist.
 - [x] Persisted workspace/checkpoint records are runtime-validated before use.
-- [x] Secret scan result recorded: 72 source files passed on 2026-08-30.
-- [x] Dependency audit result recorded and reviewed: 0 npm vulnerabilities on 2026-08-30.
+- [x] Secret scan result recorded: 87 source files passed on 2026-08-31.
+- [x] Dependency audit result recorded and reviewed: 0 npm vulnerabilities on 2026-08-31.
 - [x] Production bundle inspected for credentials and unintended endpoints.
 - [x] Public repository and deployed artifact contain no secrets found by the release scan.
 

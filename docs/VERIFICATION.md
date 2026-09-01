@@ -18,22 +18,24 @@ This document is updated from actual command output. `Passed` is never used for 
 
 ## Browser and release evidence
 
-The public rows below describe the already deployed 1.0.2 release. The polished 1.0.3 local candidate has passed the complete local matrix but has not yet been pushed, deployed, or smoke-tested at the public alias.
+The rows below describe public release `v1.0.3-webmcp-challenge` at commit `6090a4a2a97a889f51dfa61c99faaf374313e098`, except where an earlier rehearsal is labeled explicitly.
 
-| Evidence                                      | Status  | Notes                                                                         |
-| --------------------------------------------- | ------- | ----------------------------------------------------------------------------- |
-| Local production browser smoke                | Passed  | Playwright exercised the Vite production preview                              |
-| Public unauthenticated HTTP                   | Passed  | GitHub and Vercel returned HTTP 200                                           |
-| Public starter/reset/export smoke             | Passed  | 16/16 Playwright checks at the production alias                               |
-| Public console error scan                     | Passed  | No console/page errors in the bounded public run                              |
-| Exact GitHub/Vercel commit match              | Passed  | Vercel deployment metadata matched the pushed `main` SHA                      |
-| Native in-app discovery and read-only preview | Passed  | 10 tools; UI, context, and `inspect_preview` all reported `ready`             |
-| Native production mutation and stability      | Passed  | Two-file atomic write, visible preview update, one revision, stable after 5 s |
-| Native clean-origin canonical run             | Passed  | Two fresh deployment origins completed revision 0 → 1 with three files        |
-| Labeled automated walkthrough                 | Passed  | Same registered handlers; clean profile; proof receipt; 0 preview diagnostics |
-| Final 1080p video encode                      | Passed  | H.264/AAC, 1920×1080, 1:30.000, burned captions, audio at -16.51 LUFS         |
-| Current 1.0.3 candidate deployment            | Not run | Requires action-time approval for push and Vercel deployment                  |
-| Public video upload                           | Not run | Requires final human sound/image review and action-time publication approval  |
+| Evidence                                       | Status  | Notes                                                                            |
+| ---------------------------------------------- | ------- | -------------------------------------------------------------------------------- |
+| Local production browser smoke                 | Passed  | Playwright exercised the Vite production preview                                 |
+| Public unauthenticated HTTP                    | Passed  | GitHub and Vercel returned HTTP 200                                              |
+| Public starter/reset/export smoke              | Passed  | 26/26 Playwright checks at the production alias on 2026-09-01                    |
+| Public console error scan                      | Passed  | No console/page errors in the bounded public run                                 |
+| Exact GitHub/Vercel commit match               | Passed  | Vercel deployment metadata matched the pushed `main` SHA                         |
+| Native in-app discovery and read-only preview  | Passed  | 10 tools; UI, context, and `inspect_preview` all reported `ready`                |
+| Native v1.0.3 mutation, restore, and stability | Passed  | One-file write at revision 1, explicit restore at revision 2, stable and ready   |
+| Historical v1.0.2 clean-origin rehearsals      | Passed  | Two fresh origins completed three-file Roamly writes at revision 0 → 1           |
+| Labeled automated walkthrough                  | Passed  | Same registered handlers; clean profile; proof receipt; 0 preview diagnostics    |
+| Final 1080p video encode                       | Passed  | 1:30.000, burned captions, persistent adapter label, audio at -16.51 LUFS        |
+| Public 1.0.3 production deployment             | Passed  | Vercel `READY`; deployment `dpl_9pGYocF1EByTZikSDXdofykUcTY4`; exact SHA         |
+| Public video publication and signed-out play   | Not run | Older private upload is superseded; new labeled master still needs public upload |
+
+The public release receipt verifies the GitHub release, anonymous validation-pack hash, Vercel production deployment and exact commit, 26 laptop/tablet checks, three clean-browser starter renders with zero console errors, and the native WebMCP receipt. See [`PUBLIC_RELEASE_RECEIPT.json`](https://github.com/Damso74/patchwork-webmcp/releases/download/v1.0.3-webmcp-challenge/PUBLIC_RELEASE_RECEIPT.json).
 
 ## Security review
 
@@ -57,8 +59,12 @@ The first 2026-08-31 polish capture was rejected during frame review because the
 
 The final automated walkthrough was then produced from a fresh isolated `fresh=1` Playwright profile against the local release candidate. The adapter was injected before load and captured the exact ten definitions registered by the application; it did not provide a second handler implementation. The recording itself now blocks until `Go farther. Feel closer.` is visible inside the Sandpack iframe. Its proof receipt records revision 0 reads, a manual checkpoint, one automatic checkpoint, a three-file atomic write at revision 1, `inspect_preview` at rendered revision 1, and zero application console errors. The capture locally returns an empty response only for CodeSandbox's `col.csbops.io/data/sandpack` telemetry endpoint and records every such suppression in the proof JSON; any other console error fails the take.
 
-The final local encode is 90.000 seconds at 1920×1080 with H.264 video, normalized AAC narration, and burned English captions. Visual samples at 58, 68, 80, and 90 seconds confirm the WebMCP receipt, Roamly in the editor and iframe, Focus Preview, diagnostics, checkpoint restore controls, and end card. FFmpeg decoded the complete file without error. Measured loudness is -16.51 LUFS with a -0.72 dB true peak. SHA-256: `89C872CB4DDCA8BD95252CE285BDBA4359EB1717569B3AB33EB18D083639F0EF`.
+The final local encode is 90.000 seconds at 1920×1080 with H.264 video, normalized AAC narration, burned English captions, and a persistent **Automated adapter walkthrough — not ChatGPT footage** label. Visual samples at 0, 30, 60, and 89 seconds confirm that label; the earlier content review at 58, 68, 80, and 90 seconds confirms the WebMCP receipt, Roamly in the editor and iframe, Focus Preview, diagnostics, checkpoint restore controls, and end card. FFmpeg decoded the complete labeled file without error. Measured loudness remains -16.51 LUFS with a -0.72 dB true peak because its AAC stream was copied unchanged. SHA-256: `1AE559538600C5C511141A26D91C3F1489309AD17C4112F7978C522F9BB5EC1E`.
+
+Public release 1.0.3 was verified natively in the Codex in-app browser on 2026-08-31. Ten top-level tools were discovered. Reads and a manual checkpoint preserved revision 0, an atomic write committed revision 1 with a matching ready preview, an explicit restore produced revision 2 with the original heading, and the revision remained stable with zero browser console errors. This is native Codex evidence, not a manual ChatGPT run or video footage.
 
 ## Required manual ChatGPT run
+
+**Status: Not run.** Native Codex in-app-browser evidence and the Playwright adapter evidence above do not replace this separate manual run.
 
 Follow [DEMO_RUNBOOK.md](DEMO_RUNBOOK.md) in a fresh browser context in the latest ChatGPT desktop app with GPT-5.6 Sol or Terra. Record the date, app version, account/workspace type, prompt, discovered tool count, calls, revision, files changed, preview status, and whether a restore/export was completed. The fresh context matters because the development rehearsal profile intentionally retains its local IndexedDB evidence.
