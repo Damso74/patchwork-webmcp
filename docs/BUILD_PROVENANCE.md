@@ -70,8 +70,9 @@ The final list is generated from real commits and must not be backdated or rewri
 19. `docs: finalize captioned demo package`
 20. `docs: finalize public submission handoff`
 21. `docs: publish video and submission links [skip vercel]`
+22. `docs: seal publication handoff [skip vercel]`
 
-Commits 1–19 and their immutable identifiers are available in the public repository history. Commit 20 is the local submission handoff. Commit 21 records the verified public video and complete 4/5 Devpost draft; its opt-in Vercel ignore token publishes documentation without replacing the already verified release deployment. No commit was backdated or rewritten.
+Commits 1–22 and their immutable identifiers are available in the public repository history. Commits 20–22 record the submission handoff, verified public video, and complete 4/5 Devpost draft. The opt-in Vercel ignore token publishes documentation without replacing the already verified release deployment. No commit was backdated or rewritten.
 
 ## Validation truth gate
 
